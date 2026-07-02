@@ -1,0 +1,203 @@
+{
+  "schema": 2,
+  "updated_at": "2026-07-02T21:05:00Z",
+  "version": {
+    "anchor": "0.71.2"
+  },
+  "pillars": {
+    "onboard": {
+      "summary": "A 60-second orientation to the Gee Terminal you're actually working in — what the pieces are and how to drive them.",
+      "entries": [
+        {
+          "title": "Take the guided tour",
+          "action": "open-panel",
+          "panel_id": "gee-onboarding-tour",
+          "note": "A guided in-Terminal walkthrough, opened right here in the sidebar. Honest heads-up: it's still being reworked to connect to the live product rather than just describe it."
+        },
+        {
+          "title": "Spaces",
+          "where": "top bar",
+          "note": "Each space is its own workspace — separate panels, notepad, and focus. Switch spaces to switch projects without losing your place."
+        },
+        {
+          "title": "Bricks & the sidebar",
+          "where": "Shift+Cmd+D → letter",
+          "note": "Bricks are live mini-apps docked in the sidebar, each opened by its own hotkey — this guide is one of them. Press B for the Bricks browser to see everything you've got."
+        },
+        {
+          "title": "The notepad",
+          "where": "per space",
+          "note": "A shared markdown scratchpad your Gees read and write in real time — drop a note, a plan, or a bit of context and they'll pick it up on their next pass."
+        },
+        {
+          "title": "Your Gees",
+          "note": "Your workers — same engine, different jobs. You brief each one on what it does; add more as the work grows, and they can hand work off to each other."
+        },
+        {
+          "title": "This guide, two ways",
+          "where": "Shift+Cmd+D → G",
+          "note": "Learner (you're here) is what to know — onboarding, a guided tour, and what's new. Flip to Cockpit to get set up: download the Terminal, create your first Gee, and work the checklist."
+        }
+      ]
+    },
+    "tour": {
+      "summary": "A followable path through the platform, built for your first weeks: create your first Gee, grow a team, organize with Spaces, then turn the work you repeat into Bricks. Read it top to bottom; it stays current as the platform grows.",
+      "modules": [
+        {
+          "title": "Create your first Gee",
+          "blurb": "Set up your first worker, then put it to work.",
+          "lessons": [
+            {
+              "title": "Run the Create Gee wizard",
+              "note": "The first thing you'll do. A short wizard walks you through it: give the Gee a job, a personality, and a schedule. A few minutes and you've got a working teammate."
+            },
+            {
+              "title": "Just ask",
+              "note": "Brief it in plain language, like a teammate. It plans the work, picks its own tools, does it, and tells you what it found or changed. There's nothing to learn beyond saying what you want."
+            },
+            {
+              "title": "It remembers you",
+              "note": "Tell it something once — a preference, who you are, how you like things done — and it carries that forward instead of asking again every time."
+            },
+            {
+              "title": "It can reach your tools",
+              "note": "Connect an account once — calendar, email, Google Drive, Microsoft 365, your bank, the web — and your Gee can act there for you, not just talk about it."
+            }
+          ]
+        },
+        {
+          "title": "Grow your team",
+          "blurb": "Add specialists and let them work together.",
+          "lessons": [
+            {
+              "title": "One Gee per job",
+              "note": "Your first Gee doesn't have to do everything. Spin up another for a specific role — a writer, a researcher, someone to keep the books — same quick setup, a sharper focus. Add them as the work grows."
+            },
+            {
+              "title": "Hand work off",
+              "note": "A Gee can pass a bounded job to another and fold the result back in. You brief one; several can do the work behind it."
+            },
+            {
+              "title": "Skills",
+              "note": "Packaged know-how a Gee pulls in for a task — draft a doc, build a dashboard, set up another Gee. There's a marketplace to browse, and your Gees pick up their own shortcuts over time."
+            }
+          ]
+        },
+        {
+          "title": "Organize with Spaces",
+          "blurb": "Give every project and Gee its own room.",
+          "lessons": [
+            {
+              "title": "A Space is a room for one thing",
+              "where": "top bar",
+              "note": "Its own panels, notepad, and focus. A Space keeps a client project from bleeding into your books or your marketing — switch rooms to switch context."
+            },
+            {
+              "title": "Make a Space per project or per Gee",
+              "note": "Spin one up for each effort or each worker, so everything for it lives in one place. Move between them without losing where you left off."
+            },
+            {
+              "title": "The notepad",
+              "note": "A shared scratchpad in every Space your Gees read and write in real time. Drop a note, a plan, or a bit of context and they pick it up on their next pass."
+            },
+            {
+              "title": "Put work on a schedule",
+              "note": "Give a Gee a standing order — a recurring beat, like a Monday-morning summary — or an objective, a longer goal it keeps chipping at. The work happens without you asking each time."
+            }
+          ]
+        },
+        {
+          "title": "Turn repeated work into a Brick",
+          "blurb": "Make the work you repeat into a tool you keep.",
+          "lessons": [
+            {
+              "title": "A Brick is a workflow's home",
+              "where": "Shift+Cmd+D",
+              "note": "A small app docked in the sidebar with its own saved state, shared by you and your Gees. The Brick isn't the workflow itself — the workflow is the work your Gees do; the Brick is the home where that work lives and shows up. This Guide is one."
+            },
+            {
+              "title": "Build a workflow into a Brick",
+              "note": "When you catch yourself doing the same thing over and over, crystallize it: a surface with the controls and the saved state for that work, so it stops being a one-off and becomes a place you return to."
+            },
+            {
+              "title": "Use a Brick day to day",
+              "where": "Shift+Cmd+D → letter",
+              "note": "Open it by hotkey, drive it from the panel, and your Gees keep its state current in the background. It's an ongoing home, not a single run — and the platform keeps you posted here as it gains new abilities."
+            }
+          ]
+        }
+      ],
+      "empty_state": "Curriculum not authored yet."
+    },
+    "changelog": {
+      "summary": "What each gee-code version changes, surfaced on every bump.",
+      "entries": [],
+      "empty_state": "No version notes yet — an entry appears here when the platform ships a real, verified change."
+    }
+  },
+  "cockpit": {
+    "objective": "gee-guide-onboard-tour-and-keep-me-current",
+    "objective_status": "in_progress",
+    "download": {
+      "title": "Download the Gee Terminal",
+      "platform": "macOS · Apple Silicon",
+      "summary": "The Terminal is where Gee lives — your Gees, this guide, and every surface in one place. Download it, open the .dmg, drag Gee to Applications, and launch. Once you're in, this guide keeps updating live, right here.",
+      "feed": "https://gee-desktop.s3.us-west-1.amazonaws.com/the-terminal/dev",
+      "fallback_url": "https://gee-desktop.s3.us-west-1.amazonaws.com/the-terminal/dev/gee-t-1.43.5-arm64.dmg",
+      "fallback_version": "1.43.5",
+      "link_label": "Download for Mac (Apple Silicon)",
+      "note": "Dev channel — the build the Terminal auto-updates from"
+    },
+    "setup": {
+      "summary": "Get set up one step at a time. Create your first Gee right here; the rest launch the real screen or get walked through.",
+      "steps": [
+        {
+          "id": "create-gee",
+          "title": "Create your first Gee",
+          "note": "Your first worker. Give it a name and a job — it's created right here, with safe defaults you can change later.",
+          "action": "provision",
+          "provision": {
+            "cta": "Create a Gee",
+            "confirm": "Create Gee",
+            "name_placeholder": "Name — e.g. Scout",
+            "role_placeholder": "What it does — e.g. research the web and summarize what it finds",
+            "hint": "Creates a real, working Gee with safe defaults: a sandboxed shell and owner-only email. Manual to start — give it a schedule whenever you like."
+          }
+        },
+        {
+          "id": "connect-tools",
+          "title": "Connect your tools",
+          "note": "Calendar, email, Drive, your bank — connect an account once so your Gee can act there for you.",
+          "action": "guide"
+        },
+        {
+          "id": "make-space",
+          "title": "Make a Space for a project",
+          "note": "A dedicated room for one project or one Gee, with its own panels and notepad.",
+          "action": "guide"
+        },
+        {
+          "id": "see-it-live",
+          "title": "See it live",
+          "note": "A guided walkthrough of the Terminal, opened right here in the sidebar.",
+          "action": "open-panel",
+          "panel_id": "gee-onboarding-tour"
+        },
+        {
+          "id": "browse-bricks",
+          "title": "Browse your Bricks",
+          "note": "The mini-apps docked in your sidebar — this Guide is one. Open the Bricks browser to see them all.",
+          "action": "open-panel",
+          "panel_id": "brick:bricks:main"
+        }
+      ]
+    }
+  },
+  "questionnaires": {
+    "summary": "The intake instruments Gee Guide runs onboarding against. Absorb any questionnaire by pasting its doc; Gee structures it here and maps each answer to what it should drive in an onboarding recommendation.",
+    "interview_intro": "Answer what you can and submit — Gee turns it into an onboarding recommendation. Prefer not to fill a form? Hand over a document about the business instead (below); Gee reads and understands that when the interview isn't filled. Either path is enough.",
+    "instruments": [],
+    "recommendations_empty": "No recommendation yet. Fill the interview in the Interview tab, or hand over a document there, and Gee maps it — preferring the filled interview and falling back to the document when the interview is empty — into a recommendation here: first workflow, first Gee(s), connectors, and the autonomy dial. It reads only real answers; it never invents them."
+  },
+  "published_at": "2026-07-02T21:13:09.211666Z"
+}
