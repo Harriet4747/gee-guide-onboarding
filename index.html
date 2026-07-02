@@ -1,0 +1,442 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Gee Guide</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:#101114;color:#f4f1e8;font:13px/1.55 Inter,ui-sans-serif,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;display:flex;flex-direction:column;min-height:100%}
+h1,h2{margin:0;font-weight:700}
+.mono{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+a{color:#8fbc8f;text-decoration:none}
+a:hover{text-decoration:underline}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:11px 16px;border-bottom:1px solid #26282e;position:sticky;top:0;background:rgba(16,17,20,.95);backdrop-filter:blur(6px);z-index:6}
+.brand{display:flex;align-items:center;gap:9px}
+.brand .ico{font-size:18px}
+.brand h1{font-size:15px;letter-spacing:.2px}
+.ver{font-size:10.5px;color:#b9b4a8;border:1px solid #2f323a;border-radius:999px;padding:3px 9px;display:flex;gap:7px;align-items:center;white-space:nowrap}
+.ver b{color:#f4f1e8;font-weight:600}
+.ver .dl{color:#e3b341}
+.toggle{display:flex;gap:3px;background:#181a1f;border:1px solid #2f323a;border-radius:8px;padding:3px}
+.toggle button{font:600 11.5px/1 Inter,sans-serif;color:#b9b4a8;background:transparent;border:0;border-radius:6px;padding:6px 12px;cursor:pointer}
+.toggle button.on{color:#101114;background:#8fbc8f}
+main{flex:1;padding:16px;display:grid;gap:14px;align-content:start;width:100%;max-width:880px}
+.card{border:1px solid #26282e;border-radius:9px;padding:15px 16px;background:#181a1f}
+.card h2{font-size:14px;color:#f4f1e8;margin-bottom:4px;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.card h2 .src{font-size:9.5px;color:#6f7178;text-transform:uppercase;letter-spacing:.6px;font-weight:600}
+.card .sum{color:#b9b4a8;font-size:12px;margin-bottom:11px}
+.label{font-size:11px;text-transform:uppercase;color:#8fbc8f;font-weight:700;letter-spacing:.08em}
+.entry{padding:9px 0;border-top:1px solid #212329}
+.entry:first-of-type{border-top:0}
+.entry .et{font-size:13px;color:#f0ede2;font-weight:600;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.entry .en{font-size:11.5px;color:#9a958a;margin-top:3px}
+.badge{font-size:9.5px;color:#79c0ff;border:1px solid #58a6ff55;background:#58a6ff14;border-radius:5px;padding:1px 7px;font-weight:600}
+.badge.kbd{color:#c297ff;border-color:#a371f755;background:#a371f714}
+button.badge{cursor:pointer;font-family:inherit;line-height:1.45}
+button.badge.act:hover{background:#58a6ff26}
+.mod-h{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap;padding:13px 0 3px}
+.mod:first-child .mod-h{padding-top:2px}
+.mod-t{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:#8fbc8f;font-weight:700}
+.mod-b{font-size:11px;color:#7e8088}
+.entry.lesson{display:flex;gap:10px;align-items:flex-start}
+.lnum{flex:none;display:flex;align-items:center;justify-content:center;width:20px;height:20px;margin-top:1px;border-radius:6px;background:#8fbc8f1a;border:1px solid #8fbc8f40;color:#8fbc8f;font:600 11px/1 ui-monospace,monospace}
+.lbody{flex:1;min-width:0}
+.empty{font-size:12px;color:#7e8088;font-style:italic;padding:8px 10px;border:1px dashed #2f323a;border-radius:7px;background:#141519}
+.delta{font-size:12px;color:#e3b341;border:1px solid #d2992255;background:#d2992212;border-radius:7px;padding:9px 11px;margin-bottom:10px}
+.delta b{color:#f0ce8a}
+.kv{display:flex;gap:10px;font-size:12px;color:#b9b4a8;padding:5px 0}
+.kv b{color:#f0ede2;font-weight:600;min-width:118px}
+.so{padding:8px 0;border-top:1px solid #212329;font-size:12px}
+.so:first-child{border-top:0}
+.so .n{color:#f0ede2;font-weight:600}
+.so .c{color:#8fbc8f;font-size:11px;font-family:ui-monospace,monospace}
+.so .d{color:#9a958a;font-size:11.5px;margin-top:2px}
+.q{display:flex;align-items:center;gap:9px;padding:7px 0;border-top:1px solid #212329}
+.q:first-child{border-top:0}
+.pill{font-size:9.5px;padding:1px 8px;border-radius:999px;border:1px solid #8b909640;color:#b9b4a8;background:#8b90961a;text-transform:lowercase;white-space:nowrap}
+.pill.queued{color:#e3b341;border-color:#d2992240;background:#d299221a}
+.pill.done{color:#56d364;border-color:#3fb95040;background:#3fb9501a}
+.acts{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.btn{font:600 12px/1 Inter,sans-serif;color:#101114;background:#8fbc8f;border:1px solid #8fbc8f;border-radius:7px;padding:8px 13px;cursor:pointer}
+.btn.ghost{color:#c8ccd2;background:#15171b;border-color:#2f323a}
+.btn.sm{padding:6px 11px;font-size:11.5px}
+a.btn{display:inline-block;text-decoration:none}
+a.btn:hover{text-decoration:none}
+.step{display:flex;gap:11px;align-items:flex-start;padding:10px 0;border-top:1px solid #212329}
+.step:first-of-type{border-top:0}
+.chk{flex:none;width:20px;height:20px;margin-top:1px;border-radius:6px;border:1.5px solid #3a3d45;background:#101114;color:#101114;font:700 12px/1 Inter,sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
+.chk.on{background:#8fbc8f;border-color:#8fbc8f}
+.sbody{flex:1;min-width:0}
+.st{font-size:13px;color:#f0ede2;font-weight:600;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.sn{font-size:11.5px;color:#9a958a;margin-top:2px}
+.sact{flex:none;display:flex;align-items:center}
+.btn:active{transform:translateY(1px)}
+input.topic{font:12px Inter,sans-serif;color:#f4f1e8;background:#101114;border:1px solid #2f323a;border-radius:7px;padding:8px 10px;min-width:180px;flex:1}
+.pform{flex-direction:column;gap:8px;padding:2px 0 6px 31px}
+.pform .pin{font:12px Inter,sans-serif;color:#f4f1e8;background:#101114;border:1px solid #2f323a;border-radius:7px;padding:8px 10px}
+.pform .pin:focus{outline:none;border-color:#8fbc8f}
+.phint{font-size:11px;color:#7e8088;line-height:1.5}
+.ivf{padding:8px 0;border-top:1px solid #212329}
+.ivf:first-child{border-top:0}
+.ivf label{display:block;font-size:12px;color:#d8d4c8;margin-bottom:5px}
+textarea.pin{width:100%;resize:vertical;font:12px/1.5 Inter,sans-serif;min-height:34px;color:#f4f1e8;background:#101114;border:1px solid #2f323a;border-radius:7px;padding:8px 10px}
+textarea.pin:focus,select.pin:focus{outline:none;border-color:#8fbc8f}
+select.pin{width:100%;font:12px Inter,sans-serif;color:#f4f1e8;background:#101114;border:1px solid #2f323a;border-radius:7px;padding:8px 10px}
+.docform{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:#1d2a1d;color:#cde9cd;border:1px solid #3fb95055;border-radius:8px;padding:9px 14px;font-size:12px;opacity:0;transition:.25s;pointer-events:none;max-width:80%;text-align:center}
+.toast.show{opacity:1}
+.foot{font-size:10.5px;color:#6f7178;padding:2px 2px 8px}
+.pv{display:none;background:#1b1d22;border-bottom:1px solid #2f323a;color:#e3b341;font-size:11px;line-height:1.5;padding:7px 16px}
+.pv.on{display:block}
+</style>
+</head>
+<body>
+<div class="top">
+  <div class="brand"><span class="ico">📘</span><h1>Gee Guide</h1></div>
+  <div id="ver" class="ver">…</div>
+  <div class="toggle">
+    <button id="tab-learner" class="on" onclick="setView('learner')">Learner</button>
+    <button id="tab-interview" onclick="setView('interview')">Interview</button>
+    <button id="tab-cockpit" onclick="setView('cockpit')">Cockpit</button>
+  </div>
+</div>
+<div id="pv" class="pv"></div>
+<main id="root"><div class="empty">Loading…</div></main>
+<div id="toast" class="toast"></div>
+<script>
+let STATE=null, VIEW='learner', INTERVIEW_INSTRUMENT=null;
+const $=s=>document.querySelector(s);
+function esc(s){return (s==null?'':String(s)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+let PREVIEW=false;
+const PREVIEW_MSG='Preview of what a partner sees — the setup steps run on their own Terminal install.';
+function isAuthor(){return ((STATE&&STATE.product_source&&STATE.product_source.mode)||'author')!=='onboardee';}
+function guard(){if(PREVIEW){toast(PREVIEW_MSG);return true;}return false;}
+
+async function load(){
+  let ok=false;
+  try{const r=await fetch('/api/state',{cache:'no-store'});if(r.ok){STATE=await r.json();ok=true;}}catch(e){}
+  if(!ok){
+    try{const r=await fetch('./published.json',{cache:'no-store'});STATE=await r.json();}
+    catch(e){$('#root').innerHTML='<div class="empty">Could not load the Gee Guide product.</div>';return;}
+    PREVIEW=true;
+    STATE.product_source={mode:'onboardee',published_url:location.href};
+    resolveDownload();
+    const pv=$('#pv');if(pv){pv.textContent='Preview — the live product a partner sees. The download works; setup actions run on their own Terminal install.';pv.classList.add('on');}
+  }
+  renderVer();render();
+}
+function resolveDownload(){
+  const d=(STATE.cockpit&&STATE.cockpit.download);
+  if(d&&!(d.links&&d.links.length)&&d.fallback_url){
+    d.links=[{label:d.link_label||'Download',url:d.fallback_url}];
+    if(d.fallback_version)d.version=d.fallback_version;
+  }
+}
+function renderVer(){
+  const v=(STATE&&STATE.version)||{};
+  let h='<span>live <b>'+esc(v.live||'—')+'</b></span>';
+  if(v.anchor){h+='<span>· anchor <b>'+esc(v.anchor)+'</b></span>';}
+  if(v.delta){h+='<span class="dl">· delta</span>';}
+  $('#ver').innerHTML=h;
+}
+function setView(v){VIEW=v;['learner','interview','cockpit'].forEach(x=>{const b=$('#tab-'+x);if(b)b.classList.toggle('on',v===x);});render();}
+function render(){if(!STATE)return;if(VIEW==='cockpit'){renderCockpit();}else if(VIEW==='interview'){renderInterview();}else{renderLearner();}}
+
+function entryHtml(e){
+  let badge='';
+  if(e.action==='open-panel'&&e.panel_id){badge='<button class="badge act" onclick="openPanel(\''+esc(e.panel_id)+'\')">open ↗</button>';}
+  else if(e.where&&/Shift|Cmd|Ctrl|⌘/.test(e.where)){badge='<span class="badge kbd">'+esc(e.where)+'</span>';}
+  else if(e.where&&/^https?:/.test(e.where)){badge='<a class="badge" href="'+esc(e.where)+'" target="_blank">open ↗</a>';}
+  else if(e.where){badge='<span class="badge">'+esc(e.where)+'</span>';}
+  return '<div class="entry"><div class="et">'+esc(e.title)+badge+'</div>'+(e.note?'<div class="en">'+esc(e.note)+'</div>':'')+'</div>';
+}
+function pillarCard(title,src,p){
+  if(!p)return '';
+  const entries=(p.entries||[]);
+  let body=entries.length?entries.map(entryHtml).join(''):'<div class="empty">'+esc(p.empty_state||'Nothing here yet.')+'</div>';
+  return '<div class="card"><h2>'+esc(title)+'<span class="src">'+esc(src)+'</span></h2>'+(p.summary?'<div class="sum">'+esc(p.summary)+'</div>':'')+body+'</div>';
+}
+function lessonHtml(e,n){
+  let badge='';
+  if(e.action==='open-panel'&&e.panel_id){badge='<button class="badge act" onclick="openPanel(\''+esc(e.panel_id)+'\')">open ↗</button>';}
+  else if(e.where&&/Shift|Cmd|Ctrl|⌘/.test(e.where)){badge='<span class="badge kbd">'+esc(e.where)+'</span>';}
+  else if(e.where&&/^https?:/.test(e.where)){badge='<a class="badge" href="'+esc(e.where)+'" target="_blank">open ↗</a>';}
+  else if(e.where){badge='<span class="badge">'+esc(e.where)+'</span>';}
+  return '<div class="entry lesson"><span class="lnum">'+n+'</span><div class="lbody"><div class="et">'+esc(e.title)+badge+'</div>'+(e.note?'<div class="en">'+esc(e.note)+'</div>':'')+'</div></div>';
+}
+function tourCard(p){
+  if(!p)return '';
+  const mods=(p.modules||[]);
+  if(!mods.length)return pillarCard('Tour','curriculum',p);
+  let body='',n=0;
+  mods.forEach(m=>{
+    body+='<div class="mod"><div class="mod-h"><span class="mod-t">'+esc(m.title)+'</span>'+(m.blurb?'<span class="mod-b">'+esc(m.blurb)+'</span>':'')+'</div>';
+    (m.lessons||[]).forEach(l=>{n++;body+=lessonHtml(l,n);});
+    body+='</div>';
+  });
+  return '<div class="card"><h2>Tour<span class="src">curriculum</span></h2>'+(p.summary?'<div class="sum">'+esc(p.summary)+'</div>':'')+body+'</div>';
+}
+function renderLearner(){
+  const p=(STATE.pillars)||{};
+  let h='';
+  h+=pillarCard('Onboard','start here',p.onboard);
+  h+=tourCard(p.tour);
+  const cl=p.changelog||{};const vh=(STATE.version&&STATE.version.history)||[];
+  let clbody='';
+  if(vh.length){clbody+=vh.map(v=>'<div class="entry"><div class="et"><span class="mono">'+esc(v.from)+' → '+esc(v.to)+'</span><span class="badge">'+esc(v.status||'')+'</span></div>'+(v.note?'<div class="en">'+esc(v.note)+'</div>':'')+'</div>').join('');}
+  const cle=(cl.entries||[]);
+  if(cle.length){clbody+=cle.map(entryHtml).join('');}
+  if(!cle.length&&cl.empty_state){clbody+='<div class="empty">'+esc(cl.empty_state)+'</div>';}
+  if(!clbody){clbody='<div class="empty">No entries yet.</div>';}
+  h+='<div class="card"><h2>What’s New<span class="src">changelog</span></h2>'+(cl.summary?'<div class="sum">'+esc(cl.summary)+'</div>':'')+clbody+'</div>';
+  if(isAuthor())h+='<div class="foot">Content store: state/guide.json'+(STATE.store_updated_at?' · updated '+esc(STATE.store_updated_at):'')+(STATE.store_updated_by?' by '+esc(STATE.store_updated_by):'')+'</div>';
+  $('#root').innerHTML=h;
+}
+function setupCard(c){
+  const s=(c.setup)||{};const steps=(s.steps||[]);
+  if(!steps.length)return '';
+  const prog=(s.total?(s.done_count||0)+'/'+s.total+' done':'');
+  return '<div class="card"><h2>Set up<span class="src">'+esc(prog)+'</span></h2>'+(s.summary?'<div class="sum">'+esc(s.summary)+'</div>':'')+steps.map(stepHtml).join('')+'</div>';
+}
+function stepHtml(s){
+  const done=!!s.done;
+  const chk='<button class="chk'+(done?' on':'')+'" onclick="toggleStep(\''+esc(s.id)+'\')">'+(done?'✓':'')+'</button>';
+  let act;
+  if(s.action==='provision'){
+    act='<button class="btn'+(done?' ghost':'')+' sm" onclick="toggleProvision(\''+esc(s.id)+'\')">'+(done?'Create another':esc((s.provision&&s.provision.cta)||'Set it up'))+'</button>';
+  }else if(s.action==='open-panel'&&s.panel_id){
+    act='<button class="btn ghost sm" onclick="openPanel(\''+esc(s.panel_id)+'\')">Open ↗</button>';
+  }else{
+    act='<button class="btn ghost sm" onclick="guideStep(\''+esc(s.id)+'\')">Walk me through</button>';
+  }
+  const req=s.requested?' <span class="pill queued">requested</span>':'';
+  const made=s.gee?' <span class="pill done">created · '+esc(s.gee_display||s.gee)+'</span>':'';
+  let html='<div class="step">'+chk+'<div class="sbody"><div class="st">'+esc(s.title)+req+made+'</div>'+(s.note?'<div class="sn">'+esc(s.note)+'</div>':'')+'</div><div class="sact">'+act+'</div></div>';
+  if(s.action==='provision')html+=provisionForm(s);
+  return html;
+}
+function provisionForm(s){
+  const p=s.provision||{};const fid='pf-'+esc(s.id);
+  return '<div class="pform" id="'+fid+'" style="display:none">'
+    +'<input class="pin" id="'+fid+'-name" placeholder="'+esc(p.name_placeholder||'Name — e.g. Scout')+'">'
+    +'<input class="pin" id="'+fid+'-role" placeholder="'+esc(p.role_placeholder||'What it does')+'">'
+    +'<div class="acts"><button class="btn sm" onclick="provisionGee(this,\''+esc(s.id)+'\')">'+esc(p.confirm||'Create Gee')+'</button></div>'
+    +(p.hint?'<div class="phint">'+esc(p.hint)+'</div>':'')
+    +'</div>';
+}
+function toggleProvision(id){
+  const el=document.getElementById('pf-'+id);if(!el)return;
+  const show=el.style.display==='none';el.style.display=show?'flex':'none';
+  if(show){const n=document.getElementById('pf-'+id+'-name');if(n)n.focus();}
+}
+function provisionGee(btn,id){
+  if(guard())return;
+  const name=((document.getElementById('pf-'+id+'-name')||{}).value||'').trim();
+  const role=((document.getElementById('pf-'+id+'-role')||{}).value||'').trim();
+  if(!name){toast('Give the Gee a name first.');return;}
+  if(btn){btn.disabled=true;btn.textContent='Creating…';}
+  fetch('/api/provision',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'create-gee',name:name,role:role})})
+    .then(r=>r.json()).then(d=>{
+      if(d.ok){toast('Created '+(d.gee_display||d.gee||'your Gee')+' — it’s live.');load();}
+      else{toast('Could not create: '+(d.error||'error'));if(btn){btn.disabled=false;btn.textContent='Create Gee';}}
+    }).catch(()=>{toast('Could not reach backend.');if(btn){btn.disabled=false;btn.textContent='Create Gee';}});
+}
+function toggleStep(id){
+  if(guard())return;
+  const ss=((STATE.cockpit&&STATE.cockpit.setup&&STATE.cockpit.setup.steps)||[]).find(x=>x.id===id);
+  const done=ss?!ss.done:true;
+  fetch('/api/setup-step',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:id,done:done})}).then(r=>r.json()).then(d=>{d.ok?load():toast('Could not update.');}).catch(()=>toast('Could not reach backend.'));
+}
+function guideStep(id){
+  const ss=((STATE.cockpit&&STATE.cockpit.setup&&STATE.cockpit.setup.steps)||[]).find(x=>x.id===id);
+  post('setup', ss?ss.title:id);
+}
+function newFeaturesCard(){
+  const cl=(STATE.pillars&&STATE.pillars.changelog)||{};const entries=(cl.entries||[]);const v=(STATE.version)||{};
+  let body;
+  if(entries.length){body=entries.map((e,i)=>'<div class="step"><div class="sbody"><div class="st">'+esc(e.title||'New capability')+'</div>'+(e.note?'<div class="sn">'+esc(e.note)+'</div>':'')+'</div><div class="sact"><button class="btn ghost sm" onclick="setupFeature('+i+')">Set it up</button></div></div>').join('');}
+  else{body='<div class="empty">'+(v.delta?('A new version just landed (live '+esc(v.live||'?')+', tracked '+esc(v.anchor||'?')+'). The new abilities show up here to turn on once they’re written up.'):'Nothing new to turn on right now. When a version ships, the abilities worth setting up land here.')+'</div>';}
+  return '<div class="card"><h2>New — worth setting up<span class="src">from version watch</span></h2><div class="sum">As the platform gains abilities, the ones worth turning on land here.</div>'+body+'</div>';
+}
+function setupFeature(i){
+  const e=((STATE.pillars&&STATE.pillars.changelog&&STATE.pillars.changelog.entries)||[])[i];
+  post('setup', (e&&e.title)||'new capability');
+}
+function qGroup(g){
+  const items=(g.items||[]).map(it=>'<div class="entry"><div class="et" style="font-weight:500;font-size:12px">'+esc(it)+'</div></div>').join('');
+  return '<div class="mod"><div class="mod-h"><span class="mod-t">'+esc(g.title)+'</span></div>'+items+'</div>';
+}
+function qInstrument(q){
+  let h='<div class="card" style="background:#141519">';
+  h+='<h2 style="font-size:13px">'+esc(q.name)+'<span class="src">'+esc(q.kind||'questionnaire')+'</span></h2>';
+  let meta=[];
+  if(q.source_url)meta.push('<a href="'+esc(q.source_url)+'" target="_blank">source doc ↗</a>');
+  if(q.absorbed_at)meta.push('absorbed '+esc(q.absorbed_at));
+  if(meta.length)h+='<div class="sum">'+meta.join(' · ')+'</div>';
+  if(q.note)h+='<div class="sum">'+esc(q.note)+'</div>';
+  (q.groups||[]).forEach(g=>{h+=qGroup(g);});
+  if(q.ladder&&q.ladder.length){
+    h+='<div class="mod"><div class="mod-h"><span class="mod-t">L-ladder</span><span class="mod-b">the maturity dial recommendations move from</span></div>';
+    q.ladder.forEach(l=>{h+='<div class="so"><div class="n">'+esc(l.level)+' — '+esc(l.label)+'</div>'+(l.desc?'<div class="d">'+esc(l.desc)+'</div>':'')+'</div>';});
+    h+='</div>';
+  }
+  h+='</div>';
+  return h;
+}
+function questionnaireSection(){
+  const q=(STATE.questionnaires)||{};
+  const inst=(q.instruments||[]);
+  let h='<div class="card"><h2>Onboarding questionnaires<span class="src">gee-trainer</span></h2>';
+  h+='<div class="sum">'+esc(q.summary||'Intake instruments Gee Guide runs onboarding against.')+'</div>';
+  h+='<div class="acts"><input class="topic" id="qurl" placeholder="Google Doc URL of a questionnaire to absorb"><button class="btn" onclick="absorbQuestionnaire()">Absorb</button></div>';
+  const ing=(q.ingests||[]);
+  if(ing.length){h+='<div style="margin-top:11px"><div class="label" style="margin-bottom:6px">Recently absorbed</div>'+ing.slice(0,5).map(r=>'<div class="q"><span class="pill '+esc(r.status||'queued')+'">'+esc(r.status||'queued')+'</span><span>'+esc(r.name||r.url||'')+' <span class="mono" style="color:#6f7178;font-size:10.5px">'+esc(r.created_at||'')+'</span></span></div>').join('')+'</div>';}
+  h+='</div>';
+  if(inst.length){h+=inst.map(qInstrument).join('');}
+  const dm=(q.dimension_map||[]);
+  if(dm.length && q.show_dimension_map){
+    let db=dm.map(d=>'<div class="so"><div class="n">'+esc(d.dimension)+'</div>'+(d.from?'<div class="d">from '+esc(d.from)+'</div>':'')+(d.drives?'<div class="d" style="color:#8fbc8f">→ '+esc(d.drives)+'</div>':'')+'</div>').join('');
+    h+='<div class="card"><h2>How answers → recommendations<span class="src">dimension map</span></h2>'+db+'</div>';
+  }
+  return h;
+}
+function absorbQuestionnaire(){
+  const el=$('#qurl');const url=(el&&el.value||'').trim();
+  if(!url){toast('Paste a questionnaire doc URL first.');return;}
+  fetch('/api/ingest-questionnaire',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url:url})})
+    .then(r=>r.json()).then(d=>{
+      if(d.ok){toast('Absorbing — logged to gee-trainer. It structures it here on its next pass.');if(el)el.value='';load();setView('cockpit');}
+      else{toast('Could not absorb: '+(d.error||'error'));}
+    }).catch(()=>toast('Could not reach backend.'));
+}
+function recHtml(r){
+  let h='<div class="entry"><div class="et">'+esc(r.business||r.title||'Recommendation')+(r.verdict?' <span class="badge">'+esc(r.verdict)+'</span>':'')+(r.level?' <span class="badge kbd">'+esc(r.level)+'</span>':'')+'</div>';
+  if(r.summary)h+='<div class="en">'+esc(r.summary)+'</div>';
+  (r.items||[]).forEach(it=>{h+='<div class="kv"><b>'+esc(it.label||'')+'</b><span>'+esc(it.value||'')+'</span></div>';});
+  if(r.source||r.created_at)h+='<div class="en" style="color:#6f7178;font-size:10.5px;margin-top:4px">'+(r.source?'from '+esc(r.source):'')+(r.created_at?' · '+esc(r.created_at):'')+'</div>';
+  return h+'</div>';
+}
+function recommendationsCard(){
+  const q=(STATE.questionnaires)||{};const rec=(q.recommendations||[]);
+  let rb=rec.length?rec.map(recHtml).join(''):'<div class="empty">'+esc(q.recommendations_empty||'No recommendation yet.')+'</div>';
+  return '<div class="card"><h2>Onboarding recommendation<span class="src">per business</span></h2>'+rb+'</div>';
+}
+function ivFieldId(iid,gi,ii){return 'iv-'+iid+'-'+gi+'-'+ii;}
+function setInterviewInstrument(id){INTERVIEW_INSTRUMENT=id;render();}
+function intakeActivityCard(){
+  const q=(STATE.questionnaires)||{};const resp=(q.responses||[]);const docs=(q.documents||[]);
+  if(!resp.length&&!docs.length)return '';
+  let h='<div class="card"><h2>Submitted<span class="src">pending gee-trainer</span></h2>';
+  resp.slice(0,6).forEach(r=>{h+='<div class="q"><span class="pill '+esc(r.status||'queued')+'">'+esc(r.status||'queued')+'</span><span><b>interview</b>'+(r.instrument_name?' · '+esc(r.instrument_name):'')+(typeof r.answer_count==='number'?' · '+r.answer_count+' answers':'')+' <span class="mono" style="color:#6f7178;font-size:10.5px">'+esc(r.created_at||'')+'</span></span></div>';});
+  docs.slice(0,6).forEach(r=>{h+='<div class="q"><span class="pill '+esc(r.status||'queued')+'">'+esc(r.status||'queued')+'</span><span><b>document</b> · '+esc(r.url||(r.has_text?'pasted text':''))+' <span class="mono" style="color:#6f7178;font-size:10.5px">'+esc(r.created_at||'')+'</span></span></div>';});
+  return h+'</div>';
+}
+function renderInterview(){
+  const q=(STATE.questionnaires)||{};const inst=(q.instruments||[]);
+  if(!inst.length){$('#root').innerHTML='<div class="card"><h2>Run the intake<span class="src">interview</span></h2><div class="empty">'+(isAuthor()?'No questionnaire absorbed yet. Absorb one from the Cockpit tab first.':'Your intake questions will appear here once they’re set up.')+'</div></div>';return;}
+  const cur=inst.find(i=>i.id===INTERVIEW_INSTRUMENT)||inst[0];
+  let h='<div class="card"><h2>Run the intake<span class="src">interview</span></h2>';
+  h+='<div class="sum">'+esc(q.interview_intro||'Answer what you can and submit — gee-trainer turns it into an onboarding recommendation. Prefer to hand over a document instead? Use the panel below.')+'</div>';
+  if(inst.length>1){h+='<div class="acts">'+inst.map(i=>'<button class="btn '+(i.id===cur.id?'':'ghost')+' sm" onclick="setInterviewInstrument(\''+esc(i.id)+'\')">'+esc(i.name)+'</button>').join('')+'</div>';}
+  h+='</div>';
+  h+='<div class="card"><h2>'+esc(cur.name)+'<span class="src">'+esc(cur.kind||'')+'</span></h2>';
+  (cur.groups||[]).forEach((g,gi)=>{
+    h+='<div class="mod"><div class="mod-h"><span class="mod-t">'+esc(g.title)+'</span></div>';
+    (g.items||[]).forEach((it,ii)=>{const fid=ivFieldId(cur.id,gi,ii);h+='<div class="ivf"><label for="'+fid+'">'+esc(it)+'</label><textarea class="pin" id="'+fid+'" rows="2"></textarea></div>';});
+    h+='</div>';
+  });
+  if(cur.ladder&&cur.ladder.length){
+    h+='<div class="mod"><div class="mod-h"><span class="mod-t">Current L</span><span class="mod-b">best guess — the dial to move from</span></div><select class="pin" id="iv-'+esc(cur.id)+'-L"><option value="">—</option>'+cur.ladder.map(l=>'<option value="'+esc(l.level)+'">'+esc(l.level)+' — '+esc(l.label)+'</option>').join('')+'</select></div>';
+  }
+  h+='<div class="acts" style="margin-top:11px"><button class="btn" onclick="submitInterview(\''+esc(cur.id)+'\')">Submit for a recommendation</button></div>';
+  h+='</div>';
+  h+='<div class="card"><h2>Or hand over a document<span class="src">no form needed</span></h2><div class="sum">Don’t want to fill the form? Drop a doc about the business — an overview, notes, a call transcript, a filled-in intake. gee-trainer reads and understands it, then makes the recommendation. This is the fallback when the interview isn’t filled out.</div><div class="docform"><input class="pin" id="doc-url" placeholder="Google Doc / URL"><textarea class="pin" id="doc-text" rows="3" placeholder="…or paste the text here"></textarea><div class="acts"><button class="btn" onclick="absorbDocument()">Absorb &amp; understand</button></div></div></div>';
+  h+=recommendationsCard();
+  h+=intakeActivityCard();
+  $('#root').innerHTML=h;
+}
+function submitInterview(iid){
+  if(guard())return;
+  const inst=((STATE.questionnaires&&STATE.questionnaires.instruments)||[]).find(i=>i.id===iid);
+  if(!inst){toast('Instrument not found.');return;}
+  const answers=[];
+  (inst.groups||[]).forEach((g,gi)=>{(g.items||[]).forEach((it,ii)=>{const el=document.getElementById(ivFieldId(iid,gi,ii));const v=(el&&el.value||'').trim();if(v)answers.push({group:g.title,question:it,answer:v});});});
+  const lsel=document.getElementById('iv-'+iid+'-L');const level=lsel?lsel.value:'';
+  if(!answers.length&&!level){toast('Fill in at least one answer, or use the document option below.');return;}
+  fetch('/api/submit-interview',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({instrument_id:iid,instrument_name:inst.name,answers:answers,level:level})})
+    .then(r=>r.json()).then(d=>{if(d.ok){toast('Submitted — gee-trainer builds your recommendation on its next pass.');load();}else{toast('Could not submit: '+(d.error||'error'));}}).catch(()=>toast('Could not reach backend.'));
+}
+function absorbDocument(){
+  if(guard())return;
+  const url=((document.getElementById('doc-url')||{}).value||'').trim();
+  const text=((document.getElementById('doc-text')||{}).value||'').trim();
+  if(!url&&!text){toast('Paste a document URL or some text first.');return;}
+  fetch('/api/understand-document',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url:url,text:text})})
+    .then(r=>r.json()).then(d=>{if(d.ok){toast('Absorbing — gee-trainer reads and understands it, then recommends.');const u=document.getElementById('doc-url');if(u)u.value='';const t=document.getElementById('doc-text');if(t)t.value='';load();}else{toast('Could not read it: '+(d.error||'error'));}}).catch(()=>toast('Could not reach backend.'));
+}
+function downloadCard(c){
+  const d=(c.download)||{};const links=(d.links||[]);
+  if(!links.length && !d.summary)return '';
+  let h='<div class="card"><h2>'+esc(d.title||'Download the Gee Terminal')+'<span class="src">'+esc(d.platform||'start here')+'</span></h2>';
+  if(d.summary)h+='<div class="sum">'+esc(d.summary)+'</div>';
+  if(links.length){h+='<div class="acts">'+links.map(l=>'<a class="btn" href="'+esc(l.url)+'" target="_blank" rel="noopener">'+esc(l.label||'Download')+'</a>').join('')+'</div>';}
+  else{h+='<div class="empty">Download link isn’t set yet.</div>';}
+  const foot=[];if(d.version)foot.push('Current build '+esc(d.version));if(d.note)foot.push(esc(d.note));
+  if(foot.length)h+='<div class="foot" style="padding-left:0">'+foot.join(' · ')+'</div>';
+  return h+'</div>';
+}
+function renderCockpit(){
+  const c=(STATE.cockpit)||{};const v=(STATE.version)||{};
+  let h='';
+  h+=downloadCard(c);
+  h+=setupCard(c);
+  h+=newFeaturesCard();
+  if(isAuthor()){
+  h+=questionnaireSection();
+  let vw='';
+  if(v.delta){vw+='<div class="delta">⚠ Version delta: gee-trainer tracks <b>'+esc(v.anchor)+'</b>, live installed is <b>'+esc(v.live)+'</b>. A changelog entry for this bump is pending — trigger a scan to have gee-trainer reconcile it.</div>';}
+  vw+='<div class="kv"><b>Live installed</b><span>'+esc(v.live||'—')+' <span class="src" style="color:#6f7178">('+esc(v.live_source||'')+')</span></span></div>';
+  vw+='<div class="kv"><b>Tracked anchor</b><span>'+esc(v.anchor||'—')+(v.anchor_note?' — '+esc(v.anchor_note):'')+'</span></div>';
+  h+='<div class="card"><h2>Version watch<span class="src">live + gee-trainer</span></h2>'+vw+'</div>';
+  const so=(c.standing_orders||[]);
+  let sob=so.length?so.map(o=>'<div class="so"><div class="n">'+esc(o.name)+(o.cron?' <span class="c">'+esc(o.cron)+'</span>':(o.cadence?' <span class="c">'+esc(o.cadence)+'</span>':''))+'</div>'+(o.desc?'<div class="d">'+esc(o.desc)+'</div>':'')+'</div>').join(''):'<div class="empty">No standing orders recorded.</div>';
+  h+='<div class="card"><h2>Standing orders<span class="src">schedule + objective</span></h2>'+sob+'</div>';
+  const q=(c.queue||[]);
+  let qb=q.length?q.map(t=>'<div class="q"><span class="pill '+esc(t.state||'queued')+'">'+esc(t.state||'queued')+'</span><span><b>'+esc(t.task)+'</b>'+(t.note?' — <span style="color:#9a958a">'+esc(t.note)+'</span>':'')+'</span></div>').join(''):'<div class="empty">Queue empty.</div>';
+  h+='<div class="card"><h2>Proactive queue<span class="src">gee-trainer</span></h2>'+qb+'</div>';
+  h+='<div class="card"><h2>Drive gee-trainer<span class="src">round-trip</span></h2><div class="acts"><button class="btn" onclick="requestScan()">Request fresh scan</button><input class="topic" id="topic" placeholder="deep-dive topic (e.g. memory, skills)"><button class="btn ghost" onclick="requestDeepDive()">Request deep-dive</button></div>';
+  const rq=(c.requests||[]);
+  if(rq.length){h+='<div style="margin-top:12px"><div class="label" style="margin-bottom:6px">Pending requests</div>'+rq.map(r=>'<div class="q"><span class="pill '+esc(r.status||'queued')+'">'+esc(r.status||'queued')+'</span><span><b>'+esc(r.kind)+'</b>'+(r.topic?' · '+esc(r.topic):'')+' <span class="mono" style="color:#6f7178;font-size:10.5px">'+esc(r.created_at||'')+'</span></span></div>').join('')+'</div>';}
+  h+='</div>';
+  const ps=(c.pending_sends||[]);
+  let psb=ps.length?ps.map(s=>'<div class="entry"><div class="et">'+esc(s.subject||s.title||'(draft)')+'</div>'+(s.body?'<div class="en">'+esc(s.body)+'</div>':'')+'</div>').join(''):'<div class="empty">'+esc(c.pending_sends_empty||'Nothing staged to send.')+'</div>';
+  h+='<div class="card"><h2>Review queue<span class="src">before send</span></h2>'+psb+'</div>';
+  }
+  $('#root').innerHTML=h;
+}
+function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);}
+async function post(kind,topic){
+  if(guard())return;
+  try{
+    const r=await fetch('/api/request-scan',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({kind:kind,topic:topic})});
+    const d=await r.json();
+    if(d.ok){toast('Requested — logged to gee-trainer’s objective. It picks this up on its next pass.');await load();setView('cockpit');}
+    else{toast('Request failed.');}
+  }catch(e){toast('Could not reach backend.');}
+}
+function requestScan(){post('scan','');}
+function requestDeepDive(){const el=$('#topic');const t=(el&&el.value||'').trim();post('deep-dive',t);}
+async function openPanel(id){
+  if(guard())return;
+  try{
+    const r=await fetch('/api/open-panel',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:id})});
+    const d=await r.json();
+    toast(d.ok?('Opening '+id+' →'):('Could not open ('+(d.error||'error')+')'));
+  }catch(e){toast('Could not reach backend.');}
+}
+load();
+</script>
+</body>
+</html>
