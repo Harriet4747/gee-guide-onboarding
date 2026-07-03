@@ -113,6 +113,7 @@ let PREVIEW=false;
 const PREVIEW_MSG='Preview of what a partner sees — the setup steps run on their own Terminal install.';
 function isAuthor(){return ((STATE&&STATE.product_source&&STATE.product_source.mode)||'author')!=='onboardee';}
 function guard(){if(PREVIEW){toast(PREVIEW_MSG);return true;}return false;}
+function applyMode(){const q=(STATE&&STATE.questionnaires)||{};const hasInst=((q.instruments)||[]).length>0;const showIv=isAuthor()||hasInst;const itab=$('#tab-interview');if(itab)itab.style.display=showIv?'':'none';if(!showIv&&VIEW==='interview')VIEW='learner';}
 
 async function load(){
   let ok=false;
@@ -125,7 +126,7 @@ async function load(){
     resolveDownload();
     const pv=$('#pv');if(pv){pv.textContent='Preview — the live product a partner sees. The download works; setup actions run on their own Terminal install.';pv.classList.add('on');}
   }
-  renderVer();render();
+  applyMode();renderVer();render();
 }
 function resolveDownload(){
   const d=(STATE.cockpit&&STATE.cockpit.download);
