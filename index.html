@@ -147,7 +147,7 @@ function render(){if(!STATE)return;if(VIEW==='cockpit'){renderCockpit();}else if
 
 function entryHtml(e){
   let badge='';
-  if(e.action==='open-panel'&&e.panel_id){badge='<button class="badge act" onclick="openPanel(\''+esc(e.panel_id)+'\')">open ↗</button>';}
+  if(e.action==='open-panel'&&e.panel_id){const oc=e.panel_id==='gee-onboarding-tour'?'openTour()':('openPanel(\''+esc(e.panel_id)+'\')');badge='<button class="badge act" onclick="'+oc+'">open ↗</button>';}
   else if(e.where&&/Shift|Cmd|Ctrl|⌘/.test(e.where)){badge='<span class="badge kbd">'+esc(e.where)+'</span>';}
   else if(e.where&&/^https?:/.test(e.where)){badge='<a class="badge" href="'+esc(e.where)+'" target="_blank">open ↗</a>';}
   else if(e.where){badge='<span class="badge">'+esc(e.where)+'</span>';}
@@ -161,7 +161,7 @@ function pillarCard(title,src,p){
 }
 function lessonHtml(e,n){
   let badge='';
-  if(e.action==='open-panel'&&e.panel_id){badge='<button class="badge act" onclick="openPanel(\''+esc(e.panel_id)+'\')">open ↗</button>';}
+  if(e.action==='open-panel'&&e.panel_id){const oc=e.panel_id==='gee-onboarding-tour'?'openTour()':('openPanel(\''+esc(e.panel_id)+'\')');badge='<button class="badge act" onclick="'+oc+'">open ↗</button>';}
   else if(e.where&&/Shift|Cmd|Ctrl|⌘/.test(e.where)){badge='<span class="badge kbd">'+esc(e.where)+'</span>';}
   else if(e.where&&/^https?:/.test(e.where)){badge='<a class="badge" href="'+esc(e.where)+'" target="_blank">open ↗</a>';}
   else if(e.where){badge='<span class="badge">'+esc(e.where)+'</span>';}
@@ -208,7 +208,8 @@ function stepHtml(s){
   if(s.action==='provision'){
     act='<button class="btn'+(done?' ghost':'')+' sm" onclick="toggleProvision(\''+esc(s.id)+'\')">'+(done?'Create another':esc((s.provision&&s.provision.cta)||'Set it up'))+'</button>';
   }else if(s.action==='open-panel'&&s.panel_id){
-    act='<button class="btn ghost sm" onclick="openPanel(\''+esc(s.panel_id)+'\')">Open ↗</button>';
+    const oc=s.panel_id==='gee-onboarding-tour'?'openTour()':('openPanel(\''+esc(s.panel_id)+'\')');
+    act='<button class="btn ghost sm" onclick="'+oc+'">Open ↗</button>';
   }else{
     act='<button class="btn ghost sm" onclick="guideStep(\''+esc(s.id)+'\')">Walk me through</button>';
   }
@@ -436,6 +437,10 @@ async function openPanel(id){
     const d=await r.json();
     toast(d.ok?('Opening '+id+' →'):('Could not open ('+(d.error||'error')+')'));
   }catch(e){toast('Could not reach backend.');}
+}
+function openTour(){
+  if(isAuthor()){openPanel('gee-onboarding-tour');return;}
+  try{window.open('./tour.html','_blank');}catch(e){location.href='./tour.html';}
 }
 load();
 </script>

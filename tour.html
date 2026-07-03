@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Meet Gee — a guided tour</title>
+<style>
+  :root{
+    --bg:#0c0c0e; --panel:#16161a; --panel-2:#1d1d22; --line:#2a2a31;
+    --ink:#ededee; --dim:#9a9aa2; --faint:#6c6c75;
+    --gold:#d8a657; --gold-soft:#e8c386; --green:#7fcf9b; --maxw:780px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased}
+  main{height:100vh;overflow-y:scroll;scroll-snap-type:y mandatory}
+  section{min-height:100vh;scroll-snap-align:start;display:flex;align-items:center;justify-content:center;padding:64px 30px 92px;position:relative}
+  .wrap{width:100%;max-width:var(--maxw);margin:0 auto}
+  .eyebrow{font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:18px;display:flex;align-items:center;gap:12px}
+  .eyebrow .num{color:var(--faint);font-variant-numeric:tabular-nums}
+  .eyebrow .bar{height:1px;width:34px;background:var(--line)}
+  h1{font-size:clamp(28px,5vw,48px);line-height:1.1;letter-spacing:-.02em;font-weight:680;margin-bottom:20px}
+  h1 .accent{color:var(--gold-soft)}
+  p.lede{font-size:clamp(16px,2.2vw,18.5px);color:var(--dim);max-width:62ch}
+  p.lede strong{color:var(--ink);font-weight:600}
+  .caption{font-size:13.5px;color:var(--faint);margin-top:18px;max-width:58ch}
+
+  .hero h1{font-size:clamp(34px,6.4vw,62px)}
+  .hero .kicker{font-size:15px;color:var(--dim);margin-bottom:24px;letter-spacing:.02em}
+  .scroll-hint{position:absolute;left:50%;bottom:30px;transform:translateX(-50%);color:var(--faint);font-size:12px;letter-spacing:.14em;text-transform:uppercase;display:flex;flex-direction:column;align-items:center;gap:8px}
+  .scroll-hint .chev{width:13px;height:13px;border-right:1.5px solid var(--faint);border-bottom:1.5px solid var(--faint);transform:rotate(45deg);animation:bob 1.8s ease-in-out infinite}
+  @keyframes bob{0%,100%{transform:rotate(45deg) translate(0,0);opacity:.5}50%{transform:rotate(45deg) translate(3px,3px);opacity:1}}
+
+  /* workspace map */
+  .map{margin-top:30px;display:grid;grid-template-columns:.85fr 1.9fr 1.15fr;gap:10px;height:172px}
+  .region{border:1px solid var(--line);border-radius:12px;background:var(--panel);padding:14px;display:flex;flex-direction:column;justify-content:flex-end;gap:5px}
+  .region.center{background:var(--panel-2);border-color:#34343d}
+  .region.here{border-color:#3a2f17}
+  .region .rl{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold)}
+  .region .rd{font-size:12.5px;color:var(--dim);line-height:1.4}
+  .region.here .rl{color:var(--gold-soft)}
+
+  /* where chip */
+  .where{margin-top:18px;display:inline-flex;align-items:center;gap:8px;font-size:12.5px;color:var(--faint);background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:8px 13px;flex-wrap:wrap;line-height:1.9}
+  .where kbd{font-family:ui-monospace,Menlo,monospace;font-size:11.5px;color:var(--ink);background:var(--panel-2);border:1px solid var(--line);border-radius:5px;padding:2px 7px}
+
+  /* picker */
+  .tabs{display:flex;flex-wrap:wrap;gap:9px;margin:28px 0 8px}
+  .tab{appearance:none;cursor:pointer;background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:9px 15px;font-size:13.5px;color:var(--dim);transition:all .15s ease;font-family:inherit;display:flex;align-items:center;gap:8px}
+  .tab:hover{color:var(--ink);border-color:var(--faint)}
+  .tab .d{width:7px;height:7px;border-radius:50%;background:var(--faint);transition:all .15s ease}
+  .tab[aria-selected="true"]{color:#1a1304;font-weight:650;border-color:transparent;background:linear-gradient(135deg,var(--gold-soft),var(--gold))}
+  .tab[aria-selected="true"] .d{background:#1a1304}
+  .tier{font-size:11px;letter-spacing:.04em;color:var(--faint);text-transform:uppercase;min-height:14px}
+
+  /* created worker */
+  .worker{margin-top:20px;border:1px solid var(--line);border-radius:14px;background:var(--panel);overflow:hidden;animation:rise .28s ease}
+  @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  .worker .wtop{display:flex;align-items:center;gap:13px;padding:16px 18px;background:var(--panel-2);border-bottom:1px solid var(--line)}
+  .avatar{width:40px;height:40px;border-radius:11px;display:grid;place-items:center;font-weight:700;font-size:16px;color:#1a1304;background:linear-gradient(135deg,var(--gold-soft),var(--gold));flex:none}
+  .worker .wname{font-weight:650;font-size:16.5px}
+  .worker .wrole{font-size:12.5px;color:var(--faint);margin-top:1px}
+  .worker .wjobs{padding:4px 18px 14px}
+  .wjob{display:flex;gap:12px;padding:11px 0;border-bottom:1px solid var(--line);font-size:14.5px;color:var(--ink);line-height:1.45}
+  .wjob:last-child{border-bottom:0}
+  .wjob .k{color:var(--green);font-size:11px;letter-spacing:.06em;text-transform:uppercase;min-width:78px;flex:none;padding-top:3px}
+
+  /* objective field */
+  .field{margin-top:26px}
+  .field .fl{font-size:11.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--faint);margin-bottom:8px}
+  .fbox{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 17px;font-size:16px;color:var(--ink);line-height:1.5}
+
+  /* chips */
+  .stack{display:flex;flex-wrap:wrap;gap:10px;margin-top:28px}
+  .chip{background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:9px 16px;font-size:14px;color:var(--ink);display:flex;align-items:center;gap:9px}
+  .chip .cd{width:7px;height:7px;border-radius:50%;background:var(--green)}
+  .chip.byom{border-color:#3a2f17;color:var(--gold-soft)}
+  .chip.byom .cd{background:var(--gold)}
+
+  /* timeline */
+  .timeline{margin-top:30px;border-left:2px solid var(--line);padding-left:22px;display:flex;flex-direction:column;gap:18px}
+  .tl{position:relative}
+  .tl::before{content:"";position:absolute;left:-29px;top:4px;width:11px;height:11px;border-radius:50%;background:var(--bg);border:2px solid var(--gold)}
+  .tl .when{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);margin-bottom:3px}
+  .tl .what{font-size:15px;color:var(--ink)}
+  .tl .what em{color:var(--dim);font-style:normal}
+
+  /* control callout */
+  .control{margin-top:26px;display:flex;gap:14px;align-items:flex-start;background:var(--panel-2);border:1px solid var(--line);border-left:2px solid var(--gold);border-radius:0 12px 12px 0;padding:15px 18px}
+  .control .ic{flex:none;margin-top:1px;line-height:0}
+  .ic svg{width:21px;height:21px;stroke:var(--gold);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+  .control .ct{font-size:15px;color:var(--ink);line-height:1.5}
+  .control .ct b{color:var(--gold-soft);font-weight:650}
+
+  /* control cards (stop 7) */
+  .ctrl-cards{display:grid;grid-template-columns:1fr;gap:13px;margin-top:28px}
+  @media(min-width:700px){.ctrl-cards{grid-template-columns:1fr 1fr 1fr}}
+  .ccard{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 17px;display:flex;flex-direction:column;gap:10px}
+  .ccard .ch{display:flex;align-items:center;gap:10px;font-weight:650;font-size:15px}
+  .ccard .ch .ic{line-height:0}
+  .ccard .cb{font-size:13.5px;color:var(--dim);line-height:1.5}
+
+  /* CTA */
+  .cta-wrap{margin-top:32px;display:flex;flex-direction:column;gap:13px;align-items:flex-start}
+  button.cta{appearance:none;border:0;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:10px;background:linear-gradient(135deg,var(--gold-soft),var(--gold));color:#1a1304;font-weight:680;font-size:17px;padding:15px 26px;border-radius:12px;transition:transform .12s ease,box-shadow .12s ease;box-shadow:0 0 0 0 rgba(216,166,87,0)}
+  button.cta:hover{transform:translateY(-1px);box-shadow:0 10px 30px -10px rgba(216,166,87,.55)}
+  button.cta .arr{font-size:19px}
+  .fine{font-size:13px;color:var(--faint);max-width:52ch}
+  .recap{margin-top:4px;background:var(--panel);border:1px solid var(--line);border-left:2px solid var(--green);border-radius:0 12px 12px 0;padding:16px 18px;font-size:14.5px;color:var(--ink);line-height:1.55;max-width:60ch;animation:rise .28s ease}
+  .recap b{color:var(--gold-soft)}
+  .recap .step-do{margin-top:10px;color:var(--dim);font-size:13.5px}
+
+  /* rail + chrome */
+  nav.rail{position:fixed;right:18px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:13px;z-index:30}
+  nav.rail button{appearance:none;border:0;background:transparent;cursor:pointer;padding:5px;display:block}
+  nav.rail .pip{width:9px;height:9px;border-radius:50%;background:var(--line);transition:all .2s ease;display:block}
+  nav.rail button[aria-current="true"] .pip{background:var(--gold);box-shadow:0 0 0 4px rgba(216,166,87,.16);transform:scale(1.15)}
+  nav.rail button:hover .pip{background:var(--faint)}
+  @media(max-width:560px){nav.rail{right:11px;gap:10px}}
+  .brand{position:fixed;left:22px;top:20px;z-index:30;display:flex;align-items:center;gap:10px;font-weight:680;letter-spacing:-.01em}
+  .brand .g{width:26px;height:26px;border-radius:7px;background:linear-gradient(135deg,var(--gold-soft),var(--gold));color:#1a1304;display:grid;place-items:center;font-weight:800;font-size:15px}
+  .counter{position:fixed;left:24px;bottom:20px;z-index:30;font-size:12.5px;color:var(--faint);font-variant-numeric:tabular-nums;letter-spacing:.1em}
+  @media(max-width:560px){.brand{left:14px}.counter{left:16px}}
+</style>
+</head>
+<body>
+
+<div class="brand"><span class="g">G</span><span>Gee</span></div>
+<div class="counter" id="counter">01 / 07</div>
+<nav class="rail" id="rail" aria-label="Tour progress"></nav>
+
+<main id="main">
+
+  <!-- 01 hero -->
+  <section class="hero" id="s0" data-label="Welcome">
+    <div class="wrap">
+      <div class="kicker">A 2-minute tour — right here in your Terminal.</div>
+      <h1>Meet your<br>first <span class="accent">worker.</span></h1>
+      <p class="lede">This is Gee — the workspace where your AI workers actually do the back-office work, and you watch them do it. This tour walks the real thing: you'll meet a worker, give it a job, connect its tools, and set the limits that keep it yours. <strong>By the end you'll know how to build your own.</strong></p>
+    </div>
+    <div class="scroll-hint"><span>scroll</span><span class="chev"></span></div>
+  </section>
+
+  <!-- 02 workspace -->
+  <section id="s1" data-label="Your workspace">
+    <div class="wrap">
+      <div class="eyebrow"><span class="num">02</span><span class="bar"></span>Your workspace</div>
+      <h1>Everything happens here — in the open.</h1>
+      <p class="lede">No black box. Your workers live in this Terminal: <strong>spaces</strong> on the left to switch contexts, the <strong>canvas</strong> in the middle where the work shows up, and <strong>panels</strong> you pin on the right. Open anything with a keystroke.</p>
+      <div class="map">
+        <div class="region"><div class="rl">Left</div><div class="rd">Spaces — one per context</div></div>
+        <div class="region center"><div class="rl">Center</div><div class="rd">Canvas — watch the work happen</div></div>
+        <div class="region here"><div class="rl">Right · you're here</div><div class="rd">Panels — pin your tools</div></div>
+      </div>
+      <div class="where">You opened this tour with <kbd>&#8679;&#8984;D</kbd> then <kbd>T</kbd> — that's how every panel here opens.</div>
+    </div>
+  </section>
+
+  <!-- 03 meet worker + picker -->
+  <section id="s2" data-label="Meet your worker">
+    <div class="wrap">
+      <div class="eyebrow"><span class="num">03</span><span class="bar"></span>Meet your first worker</div>
+      <h1>Tell it what you run. It shows up ready.</h1>
+      <p class="lede">A worker isn't a chat window — it has a name, a role, and a memory. When you create one, you tell it your business and it arrives already knowing the shape of your week. <strong>A few examples — pick the one closest to yours:</strong></p>
+      <div class="tabs" id="tabs" role="tablist" aria-label="Example businesses"></div>
+      <p class="tier" id="tier"></p>
+      <div class="worker" id="worker" aria-live="polite"></div>
+      <p class="caption">Not your exact business? Pick the closest. This is a preview of the worker you'd get — you create it for real, and rename or change anything, from the Cockpit.</p>
+    </div>
+  </section>
+
+  <!-- 04 give it a job + guardrail -->
+  <section id="s3" data-label="Give it a job">
+    <div class="wrap">
+      <div class="eyebrow"><span class="num">04</span><span class="bar"></span>Give it a job</div>
+      <h1>Say it once. It holds the job.</h1>
+      <p class="lede">Hand your worker a standing job in plain words — like briefing a sharp new hire. It keeps that job between the times you talk to it, and works it on its own.</p>
+      <div class="field">
+        <div class="fl">Your worker's standing job</div>
+        <div class="fbox" id="objective"></div>
+      </div>
+      <div class="control">
+        <span class="ic"><svg viewBox="0 0 24 24"><path d="M12 3l7 2.5v5.6c0 4.3-3 7.3-7 8.4-4-1.1-7-4.1-7-8.4V5.5L12 3z"/><path d="M9 12l2.2 2.2L15 10.5"/></svg></span>
+        <div class="ct">Set the limits in the same place. You decide what it does on its own and <b>what waits for your yes</b> — any send, spend, or change can hold for your approval.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 connect tools + permissions -->
+  <section id="s4" data-label="Connect its tools">
+    <div class="wrap">
+      <div class="eyebrow"><span class="num">05</span><span class="bar"></span>Connect its tools</div>
+      <h1>Plug in your tools. Bring your own model.</h1>
+      <p class="lede">Your worker works <strong>inside</strong> the tools you already use — not in a silo you copy-paste into. And you choose the AI under the hood; swap it whenever a better one ships, your workers stay.</p>
+      <div class="stack">
+        <span class="chip"><span class="cd"></span>Email</span>
+        <span class="chip"><span class="cd"></span>Calendar</span>
+        <span class="chip"><span class="cd"></span>Drive &amp; docs</span>
+        <span class="chip"><span class="cd"></span>Messaging</span>
+        <span class="chip byom"><span class="cd"></span>Your own model</span>
+      </div>
+      <div class="control">
+        <span class="ic"><svg viewBox="0 0 24 24"><circle cx="8.5" cy="8.5" r="3.3"/><path d="M10.9 10.9L20 20"/><path d="M16.5 16.5l2-2M18.5 18.5l1.6-1.6"/></svg></span>
+        <div class="ct">You grant each connection on purpose, and pull it back in a click. A worker <b>only touches what you've allowed</b>, and sends from your Gee inbox unless you hand it an outside account.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 works + remembers + cost -->
+  <section id="s5" data-label="It keeps going">
+    <div class="wrap">
+      <div class="eyebrow"><span class="num">06</span><span class="bar"></span>It remembers, and keeps going</div>
+      <h1>It picks the work back up — on its own.</h1>
+      <p class="lede">Your worker remembers across days and wakes itself on a schedule to move things forward, no prompt required. You watch it in the canvas, with a checkpoint whenever it matters.</p>
+      <div class="timeline">
+        <div class="tl"><div class="when">Mon 4:58 pm</div><div class="what">Sent the weekly update to 9 clients. <em>Filed a copy in Drive.</em></div></div>
+        <div class="tl"><div class="when">Tue 9:02 am</div><div class="what">No reply from Acme — sent a friendly nudge. <em>You didn't have to remember.</em></div></div>
+        <div class="tl"><div class="when">Wed 8:40 am</div><div class="what">Two invoices crossed 30 days — drafted the follow-ups, holding for your OK.</div></div>
+      </div>
+      <div class="control">
+        <span class="ic"><svg viewBox="0 0 24 24"><path d="M4.5 15a7.5 7.5 0 0 1 15 0"/><path d="M12 15l4.2-3.2"/><circle cx="12" cy="15" r="1.2" fill="#d8a657" stroke="none"/></svg></span>
+        <div class="ct">Every run shows what it cost. The model you picked is your cost dial — <b>set a budget per worker</b>, and it checks in before it runs past the cap.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 07 stay in control + CTA -->
+  <section id="s6" data-label="Stay in control">
+    <div class="wrap">
+      <div class="eyebrow"><span class="num">07</span><span class="bar"></span>Stay in control</div>
+      <h1>It's powerful because <span class="accent">you set the rules.</span></h1>
+      <p class="lede">Three dials keep a worker firmly yours. Set them when you create it; change them anytime.</p>
+      <div class="ctrl-cards">
+        <div class="ccard"><div class="ch"><span class="ic"><svg viewBox="0 0 24 24"><path d="M12 3l7 2.5v5.6c0 4.3-3 7.3-7 8.4-4-1.1-7-4.1-7-8.4V5.5L12 3z"/><path d="M9 12l2.2 2.2L15 10.5"/></svg></span>Guardrails &amp; approvals</div><div class="cb">Decide what runs on its own and what waits for your yes. Checkpoints on anything that sends, spends, or changes something.</div></div>
+        <div class="ccard"><div class="ch"><span class="ic"><svg viewBox="0 0 24 24"><circle cx="8.5" cy="8.5" r="3.3"/><path d="M10.9 10.9L20 20"/><path d="M16.5 16.5l2-2M18.5 18.5l1.6-1.6"/></svg></span>Permissions &amp; security</div><div class="cb">Grant each tool on purpose, revoke in a click. Workers send from your Gee inbox by default; outside accounts only when you hand them over.</div></div>
+        <div class="ccard"><div class="ch"><span class="ic"><svg viewBox="0 0 24 24"><path d="M4.5 15a7.5 7.5 0 0 1 15 0"/><path d="M12 15l4.2-3.2"/><circle cx="12" cy="15" r="1.2" fill="#d8a657" stroke="none"/></svg></span>Spend &amp; cost</div><div class="cb">Pick the model that fits your budget. Track what each worker and workflow costs, and cap it so nothing surprises you.</div></div>
+      </div>
+      <div class="cta-wrap">
+        <button class="cta" type="button" onclick="location.href='./'"><span>Set up your worker in the Cockpit</span> <span class="arr">&#8594;</span></button>
+        <p class="fine">That's the tour. When you're ready, your first worker gets created for real from the Cockpit — download the Terminal, then walk the setup steps.</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+  // Example businesses — a starter set. Add, remove, or swap entries freely; each one becomes a tab.
+  var VERTS = [
+    {key:"home", label:"Home services", tier:"HVAC, plumbing, electrical", worker:"Dispatch", role:"Billing, booking and job records",
+     jobs:[
+       {k:"Billing", t:"Chases the unpaid invoice the day it ages past terms — in your shop's voice, not a robot's."},
+       {k:"Booking", t:"Turns a missed call into a booked service window before the lead goes cold."},
+       {k:"Job records", t:"Files the warranty, the photos, and the notes against the right job, so you can find them in a year."}
+     ],
+     objective:"Chase every invoice the day it ages past terms, and each Monday show me the jobs that are done but still unbilled."},
+    {key:"field", label:"Field services", tier:"landscaping, pool, pest, cleaning", worker:"Routes", role:"Routes, renewals and rebooks",
+     jobs:[
+       {k:"Routes", t:"Confirms tomorrow's stops the night before, so the crew rolls without you texting everyone."},
+       {k:"Weather", t:"Re-books the rained-out visit and tells the customer — you never touch the calendar."},
+       {k:"Renewals", t:"Flags the client who hasn't renewed for the season while there's still time to ask."}
+     ],
+     objective:"Confirm tomorrow's stops every evening, re-book anything rained out, and flag clients who haven't renewed for the season."},
+    {key:"auto", label:"Auto repair", tier:"auto repair, tire and service shops", worker:"Service Desk", role:"Status, approvals and reminders",
+     jobs:[
+       {k:"Status", t:"Texts the customer the moment the car's ready, in your shop's voice."},
+       {k:"Approvals", t:"Chases the estimate that's been sitting unanswered, so the bay isn't tied up waiting."},
+       {k:"Reminders", t:"Tells the regulars when service is due — before they drift back to the dealer."}
+     ],
+     objective:"Text customers the moment their car is ready, chase any estimate sitting unanswered, and keep the due-for-service list warm."},
+    {key:"cas", label:"Accounting firm", tier:"bookkeeping and accounting firms", worker:"Close", role:"Close prep and client comms",
+     jobs:[
+       {k:"Close prep", t:"Chases the missing client docs before month-end, not at 9pm on the 28th."},
+       {k:"Client comms", t:"Drafts each client's monthly email straight off the numbers, in your firm's tone."},
+       {k:"Review", t:"Flags the client whose books look off this month, so a human looks before it ships."}
+     ],
+     objective:"Run the pre-close checklist on every client in parallel, and chase missing docs before month-end — not at 9pm on the 28th."},
+    {key:"medspa", label:"Med spa", tier:"med spas and aesthetics clinics", worker:"Front Desk", role:"Bookings, aftercare and consults",
+     jobs:[
+       {k:"Bookings", t:"Confirms appointments and fills a cancellation off the waitlist before the chair goes empty."},
+       {k:"Aftercare", t:"Sends the right aftercare and the rebook reminder on schedule, per treatment."},
+       {k:"Consults", t:"Follows up on the consult that didn't book the same day, while interest is still warm."}
+     ],
+     objective:"Confirm appointments, fill cancellations off the waitlist, and follow up on every consult that didn't book the same day."},
+    {key:"realestate", label:"Real estate team", tier:"real estate teams and brokerages", worker:"Lead Desk", role:"Lead follow-up and transactions",
+     jobs:[
+       {k:"Speed to lead", t:"Follows up with every new lead inside the hour, in your voice — even mid-showing."},
+       {k:"Transactions", t:"Keeps each listing moving: photos, disclosures, signatures, deadlines."},
+       {k:"Past clients", t:"Nudges the one-year-ago buyer with something useful, so referrals keep coming."}
+     ],
+     objective:"Follow up with every new lead inside the hour in my voice, and keep each active listing's photos, disclosures, and deadlines moving."}
+  ];
+
+  var tabsEl = document.getElementById('tabs');
+  var tierEl = document.getElementById('tier');
+  var workerEl = document.getElementById('worker');
+  var objEl = document.getElementById('objective');
+  var picked = -1;
+
+  VERTS.forEach(function(v, i){
+    var b = document.createElement('button');
+    b.className = 'tab';
+    b.setAttribute('role', 'tab');
+    b.setAttribute('aria-selected', 'false');
+    b.innerHTML = '<span class="d"></span>' + v.label;
+    b.addEventListener('click', function(){ select(i); });
+    tabsEl.appendChild(b);
+  });
+  var tabEls = Array.prototype.slice.call(tabsEl.querySelectorAll('.tab'));
+
+  function select(i){
+    if(i === picked) return;
+    picked = i;
+    tabEls.forEach(function(t, j){ t.setAttribute('aria-selected', j === i ? 'true' : 'false'); });
+    var v = VERTS[i];
+    tierEl.textContent = v.tier;
+    var jobs = v.jobs.map(function(j){
+      return '<div class="wjob"><span class="k">' + j.k + '</span><span>' + j.t + '</span></div>';
+    }).join('');
+    workerEl.innerHTML =
+      '<div class="wtop"><div class="avatar">' + v.worker.charAt(0) + '</div>' +
+      '<div><div class="wname">' + v.worker + '</div><div class="wrole">' + v.role + ' &middot; your ' + v.label.toLowerCase() + ' worker</div></div></div>' +
+      '<div class="wjobs">' + jobs + '</div>';
+    objEl.textContent = '"' + v.objective + '"';
+  }
+
+  // progress rail + scroll-snap nav
+  var main = document.getElementById('main');
+  var sections = Array.prototype.slice.call(document.querySelectorAll('section'));
+  var rail = document.getElementById('rail');
+  var counter = document.getElementById('counter');
+  var cur = 0;
+
+  sections.forEach(function(sec, i){
+    var b = document.createElement('button');
+    b.setAttribute('aria-label', sec.dataset.label || ('Step ' + (i+1)));
+    b.innerHTML = '<span class="pip"></span>';
+    b.addEventListener('click', function(){ sec.scrollIntoView({behavior:'smooth'}); });
+    rail.appendChild(b);
+  });
+  var pips = Array.prototype.slice.call(rail.querySelectorAll('button'));
+
+  function setActive(i){
+    if(i === cur) return;
+    cur = i;
+    pips.forEach(function(p, j){ p.setAttribute('aria-current', j === i ? 'true' : 'false'); });
+    counter.textContent = String(i+1).padStart(2,'0') + ' / ' + String(sections.length).padStart(2,'0');
+  }
+
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting && e.intersectionRatio >= 0.5){ setActive(sections.indexOf(e.target)); }
+    });
+  }, {root: main, threshold:[0.5]});
+  sections.forEach(function(s){ io.observe(s); });
+
+  window.addEventListener('keydown', function(e){
+    if(e.key === 'ArrowDown' || e.key === 'PageDown'){ e.preventDefault(); if(cur < sections.length-1) sections[cur+1].scrollIntoView({behavior:'smooth'}); }
+    if(e.key === 'ArrowUp' || e.key === 'PageUp'){ e.preventDefault(); if(cur > 0) sections[cur-1].scrollIntoView({behavior:'smooth'}); }
+  });
+
+  pips[0].setAttribute('aria-current', 'true');
+  select(0);
+</script>
+</body>
+</html>
