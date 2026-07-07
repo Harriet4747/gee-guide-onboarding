@@ -190,14 +190,14 @@
   <section id="s4" data-label="Connect its tools">
     <div class="wrap">
       <div class="eyebrow"><span class="num">05</span><span class="bar"></span>Connect its tools</div>
-      <h1>Plug in your tools. Bring your own model.</h1>
-      <p class="lede">Your worker works <strong>inside</strong> the tools you already use — not in a silo you copy-paste into. And you choose the AI under the hood; swap it whenever a better one ships, your workers stay.</p>
+      <h1>Plug in your tools. Bring your model(s).</h1>
+      <p class="lede">Your worker works <strong>inside</strong> the tools you already use — not in a silo you copy-paste into. And you choose the AI under the hood: bring your model(s), and toggle between them yourself or let Geenius toggle for you. Swap in a better one whenever it ships; your workers stay.</p>
       <div class="stack">
         <span class="chip"><span class="cd"></span>Email</span>
         <span class="chip"><span class="cd"></span>Calendar</span>
         <span class="chip"><span class="cd"></span>Drive &amp; docs</span>
         <span class="chip"><span class="cd"></span>Messaging</span>
-        <span class="chip byom"><span class="cd"></span>Your own model</span>
+        <span class="chip byom"><span class="cd"></span>Your model(s)</span>
       </div>
       <div class="control">
         <span class="ic"><svg viewBox="0 0 24 24"><circle cx="8.5" cy="8.5" r="3.3"/><path d="M10.9 10.9L20 20"/><path d="M16.5 16.5l2-2M18.5 18.5l1.6-1.6"/></svg></span>
@@ -245,8 +245,9 @@
 </main>
 
 <script>
-  // Example businesses — a starter set. Add, remove, or swap entries freely; each one becomes a tab.
-  var VERTS = [
+  // Example businesses live in guide.json (pillars.tour.examples) so they can be edited in the
+  // panel and published. This hardcoded set is the offline fallback if that data can't be reached.
+  var FALLBACK_VERTS = [
     {key:"home", label:"Home services", tier:"HVAC, plumbing, electrical", worker:"Dispatch", role:"Billing, booking and job records",
      jobs:[
        {k:"Billing", t:"Chases the unpaid invoice the day it ages past terms — in your shop's voice, not a robot's."},
@@ -290,23 +291,28 @@
      ],
      objective:"Follow up with every new lead inside the hour in my voice, and keep each active listing's photos, disclosures, and deadlines moving."}
   ];
+  var VERTS = FALLBACK_VERTS;
 
   var tabsEl = document.getElementById('tabs');
   var tierEl = document.getElementById('tier');
   var workerEl = document.getElementById('worker');
   var objEl = document.getElementById('objective');
   var picked = -1;
+  var tabEls = [];
 
-  VERTS.forEach(function(v, i){
-    var b = document.createElement('button');
-    b.className = 'tab';
-    b.setAttribute('role', 'tab');
-    b.setAttribute('aria-selected', 'false');
-    b.innerHTML = '<span class="d"></span>' + v.label;
-    b.addEventListener('click', function(){ select(i); });
-    tabsEl.appendChild(b);
-  });
-  var tabEls = Array.prototype.slice.call(tabsEl.querySelectorAll('.tab'));
+  function buildTabs(){
+    tabsEl.innerHTML = '';
+    VERTS.forEach(function(v, i){
+      var b = document.createElement('button');
+      b.className = 'tab';
+      b.setAttribute('role', 'tab');
+      b.setAttribute('aria-selected', 'false');
+      b.innerHTML = '<span class="d"></span>' + v.label;
+      b.addEventListener('click', function(){ select(i); });
+      tabsEl.appendChild(b);
+    });
+    tabEls = Array.prototype.slice.call(tabsEl.querySelectorAll('.tab'));
+  }
 
   function select(i){
     if(i === picked) return;
@@ -322,6 +328,27 @@
       '<div><div class="wname">' + v.worker + '</div><div class="wrole">' + v.role + ' &middot; your ' + v.label.toLowerCase() + ' worker</div></div></div>' +
       '<div class="wjobs">' + jobs + '</div>';
     objEl.textContent = '"' + v.objective + '"';
+  }
+
+  function applyExamples(list){
+    if(!Array.isArray(list) || !list.length) return;
+    VERTS = list; picked = -1; buildTabs(); select(0);
+  }
+  function loadExamples(){
+    fetch('/api/state', {cache:'no-store'})
+      .then(function(r){ return r.ok ? r.json() : null; })
+      .catch(function(){ return null; })
+      .then(function(data){
+        var ex = data && data.pillars && data.pillars.tour && data.pillars.tour.examples;
+        if(Array.isArray(ex) && ex.length){ applyExamples(ex); return; }
+        return fetch('./published.json', {cache:'no-store'})
+          .then(function(r){ return r.ok ? r.json() : null; })
+          .catch(function(){ return null; })
+          .then(function(pd){
+            var pex = pd && pd.pillars && pd.pillars.tour && pd.pillars.tour.examples;
+            if(Array.isArray(pex) && pex.length){ applyExamples(pex); }
+          });
+      });
   }
 
   // progress rail + scroll-snap nav
@@ -360,7 +387,9 @@
   });
 
   pips[0].setAttribute('aria-current', 'true');
+  buildTabs();
   select(0);
+  loadExamples();
 </script>
 </body>
 </html>

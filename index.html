@@ -106,16 +106,38 @@ select.pin{width:100%;font:12px var(--font-sans);color:var(--text-primary);backg
 .foot{font-size:10.5px;color:var(--text-muted);padding:2px 2px 8px}
 .pv{display:none;background:var(--bg-overlay);border-bottom:1px solid var(--border);color:var(--warning);font-size:11px;line-height:1.5;padding:7px 16px}
 .pv.on{display:block}
+.edit-toggle{display:none;font:600 11.5px/1 var(--font-sans);color:var(--warning);background:var(--warning-subtle);border:1px solid var(--warning-border);border-radius:8px;padding:7px 12px;cursor:pointer;white-space:nowrap}
+.edit-toggle.on{color:var(--bg-base);background:var(--warning);border-color:var(--warning)}
+.ed-hint{font-size:11.5px;color:var(--text-tertiary);background:var(--bg-surface);border:1px dashed var(--border);border-radius:8px;padding:9px 12px;line-height:1.5}
+.ed-hint b{color:var(--text-secondary);font-weight:600}
+.ed-field{margin:8px 0}
+.ed-field label{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);font-weight:700;margin-bottom:4px}
+.ed-in{width:100%;font:12.5px/1.5 var(--font-sans);color:var(--text-primary);background:var(--bg-base);border:1px solid var(--border);border-radius:7px;padding:8px 10px;resize:vertical}
+.ed-in:focus{outline:none;border-color:var(--accent)}
+.ed-item{border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin:9px 0;background:var(--bg-surface)}
+.ed-item-h{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:2px}
+.ed-item-h .lbl{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--accent);font-weight:700}
+.ed-x{font:600 11px/1 var(--font-sans);color:var(--text-tertiary);background:transparent;border:1px solid var(--border);border-radius:6px;padding:5px 9px;cursor:pointer}
+.ed-x:hover{color:var(--danger);border-color:var(--danger)}
+.ed-add{font:600 11.5px/1 var(--font-sans);color:var(--accent);background:var(--accent-subtle);border:1px solid var(--accent-border);border-radius:7px;padding:7px 11px;cursor:pointer;margin-top:6px}
+.ed-add:hover{background:rgba(59,130,246,.22)}
+.ed-jrow{display:grid;grid-template-columns:110px 1fr auto;gap:7px;align-items:start;margin:6px 0}
+.editbar{position:fixed;bottom:0;left:0;right:0;display:flex;gap:9px;align-items:center;padding:10px 16px;background:rgba(10,10,11,.97);border-top:1px solid var(--border-strong);backdrop-filter:blur(6px);z-index:8}
+.editbar .msg{margin-right:auto;font-size:11.5px;color:var(--text-tertiary)}
+main.editing{padding-bottom:66px}
 </style>
 </head>
 <body>
 <div class="top">
   <div class="brand"><span class="ico"><span class="gmark">g</span><span class="smile">:)</span></span><h1>Gee Guide</h1></div>
   <div id="ver" class="ver">…</div>
-  <div class="toggle">
-    <button id="tab-learner" class="on" onclick="setView('learner')">Learner</button>
-    <button id="tab-interview" onclick="setView('interview')">Interview</button>
-    <button id="tab-cockpit" onclick="setView('cockpit')">Cockpit</button>
+  <div style="display:flex;align-items:center;gap:9px">
+    <button id="edit-toggle" class="edit-toggle" onclick="toggleEdit()">✎ Edit</button>
+    <div class="toggle">
+      <button id="tab-learner" class="on" onclick="setView('learner')">Learner</button>
+      <button id="tab-interview" onclick="setView('interview')">Interview</button>
+      <button id="tab-cockpit" onclick="setView('cockpit')">Cockpit</button>
+    </div>
   </div>
 </div>
 <div id="pv" class="pv"></div>
@@ -129,7 +151,7 @@ let PREVIEW=false;
 const PREVIEW_MSG='Preview of what a partner sees — the setup steps run on their own Terminal install.';
 function isAuthor(){return ((STATE&&STATE.product_source&&STATE.product_source.mode)||'author')!=='onboardee';}
 function guard(){if(PREVIEW){toast(PREVIEW_MSG);return true;}return false;}
-function applyMode(){const q=(STATE&&STATE.questionnaires)||{};const hasInst=((q.instruments)||[]).length>0;const showIv=isAuthor()||hasInst;const itab=$('#tab-interview');if(itab)itab.style.display=showIv?'':'none';if(!showIv&&VIEW==='interview')VIEW='learner';}
+function applyMode(){const q=(STATE&&STATE.questionnaires)||{};const hasInst=((q.instruments)||[]).length>0;const showIv=isAuthor()||hasInst;const itab=$('#tab-interview');if(itab)itab.style.display=showIv?'':'none';if(!showIv&&VIEW==='interview')VIEW='learner';const et=$('#edit-toggle');if(et)et.style.display=canEdit()?'inline-block':'none';if(!canEdit()&&EDITING){EDITING=false;DRAFT=null;}syncEditToggle();}
 
 async function load(){
   let ok=false;
@@ -159,7 +181,7 @@ function renderVer(){
   $('#ver').innerHTML=h;
 }
 function setView(v){VIEW=v;['learner','interview','cockpit'].forEach(x=>{const b=$('#tab-'+x);if(b)b.classList.toggle('on',v===x);});render();}
-function render(){if(!STATE)return;if(VIEW==='cockpit'){renderCockpit();}else if(VIEW==='interview'){renderInterview();}else{renderLearner();}}
+function render(){if(!STATE)return;if(VIEW==='cockpit'){renderCockpit();}else if(VIEW==='interview'){renderInterview();}else{renderLearner();}syncEditBar();}
 
 function entryHtml(e){
   let badge='';
@@ -196,6 +218,7 @@ function tourCard(p){
   return '<div class="card"><h2>Tour<span class="src">curriculum</span></h2>'+(p.summary?'<div class="sum">'+esc(p.summary)+'</div>':'')+body+'</div>';
 }
 function renderLearner(){
+  if(EDITING&&canEdit()){renderLearnerEdit();return;}
   const p=(STATE.pillars)||{};
   let h='';
   h+=pillarCard('Onboard','start here',p.onboard);
@@ -457,6 +480,78 @@ async function openPanel(id){
 function openTour(){
   if(isAuthor()){openPanel('gee-onboarding-tour');return;}
   try{window.open('./tour.html','_blank');}catch(e){location.href='./tour.html';}
+}
+/* ---- author content editor ---- */
+let EDITING=false, DRAFT=null;
+function canEdit(){return isAuthor() && !PREVIEW;}
+function syncEditToggle(){const b=$('#edit-toggle');if(b)b.classList.toggle('on',EDITING);}
+function toggleEdit(){if(!canEdit())return;EDITING?stopEdit():startEdit();}
+function clone(x){return x==null?x:JSON.parse(JSON.stringify(x));}
+function buildDraft(){
+  const p=(STATE&&STATE.pillars)||{};const ob=p.onboard||{},tr=p.tour||{},cl=p.changelog||{};
+  return {
+    onboard:{summary:ob.summary||'',entries:clone(ob.entries)||[]},
+    tour:{summary:tr.summary||'',examples:clone(tr.examples)||[]},
+    changelog:{summary:cl.summary||'',entries:clone(cl.entries)||[]}
+  };
+}
+function startEdit(){DRAFT=buildDraft();EDITING=true;setView('learner');syncEditToggle();render();}
+function stopEdit(){EDITING=false;DRAFT=null;syncEditToggle();render();}
+function refreshState(){fetch('/api/state',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(s=>{if(s)STATE=s;}).catch(()=>{});}
+function edCard(title,src,inner){return '<div class="card"><h2>'+esc(title)+'<span class="src">'+esc(src)+'</span></h2>'+inner+'</div>';}
+function edAddBtn(oc,label){return '<button class="ed-add" onclick="'+oc+'">'+esc(label)+'</button>';}
+function dset(path,val){const a=path.split('.');let o=DRAFT;for(let i=0;i<a.length-1;i++)o=o[a[i]];o[a[a.length-1]]=val;}
+function edText(path,label,val,rows){return '<div class="ed-field"><label>'+esc(label)+'</label><textarea class="ed-in" rows="'+(rows||2)+'" oninput="dset(\''+path+'\',this.value)">'+esc(val||'')+'</textarea></div>';}
+function edEntry(coll,i,e){
+  const tag=coll==='changelog'?'Note':'Item';const has=e.action==='open-panel'?' · has open button':'';
+  return '<div class="ed-item"><div class="ed-item-h"><span class="lbl">'+esc(tag)+' '+(i+1)+esc(has)+'</span><button class="ed-x" onclick="draftRemove(\''+coll+'\','+i+')">Remove</button></div>'
+    +'<div class="ed-field"><label>Title</label><input class="ed-in" value="'+esc(e.title||'')+'" oninput="draftSet(\''+coll+'\','+i+',\'title\',this.value)"></div>'
+    +'<div class="ed-field"><label>Text</label><textarea class="ed-in" rows="3" oninput="draftSet(\''+coll+'\','+i+',\'note\',this.value)">'+esc(e.note||'')+'</textarea></div></div>';
+}
+function draftSet(coll,i,k,v){DRAFT[coll].entries[i][k]=v;}
+function draftRemove(coll,i){DRAFT[coll].entries.splice(i,1);render();}
+function draftAdd(coll){DRAFT[coll].entries.push({title:'',note:''});render();}
+function edExample(i,x){
+  const jobs=(x.jobs||[]).map((j,ji)=>'<div class="ed-jrow"><input class="ed-in" placeholder="Label" value="'+esc(j.k||'')+'" oninput="exJob('+i+','+ji+',\'k\',this.value)"><textarea class="ed-in" rows="2" placeholder="What it does" oninput="exJob('+i+','+ji+',\'t\',this.value)">'+esc(j.t||'')+'</textarea><button class="ed-x" onclick="exJobDel('+i+','+ji+')">×</button></div>').join('');
+  return '<div class="ed-item"><div class="ed-item-h"><span class="lbl">'+esc(x.label||'Example')+'</span><button class="ed-x" onclick="exDel('+i+')">Remove</button></div>'
+    +'<div class="ed-field"><label>Business name (tab)</label><input class="ed-in" value="'+esc(x.label||'')+'" oninput="exSet('+i+',\'label\',this.value)"></div>'
+    +'<div class="ed-field"><label>Descriptor (line under the tabs)</label><input class="ed-in" value="'+esc(x.tier||'')+'" oninput="exSet('+i+',\'tier\',this.value)"></div>'
+    +'<div class="ed-field"><label>Worker name</label><input class="ed-in" value="'+esc(x.worker||'')+'" oninput="exSet('+i+',\'worker\',this.value)"></div>'
+    +'<div class="ed-field"><label>Worker role</label><input class="ed-in" value="'+esc(x.role||'')+'" oninput="exSet('+i+',\'role\',this.value)"></div>'
+    +'<div class="ed-field"><label>Jobs</label>'+jobs+edAddBtn('exJobAdd('+i+')','+ Add job')+'</div>'
+    +'<div class="ed-field"><label>Sample standing job</label><textarea class="ed-in" rows="2" oninput="exSet('+i+',\'objective\',this.value)">'+esc(x.objective||'')+'</textarea></div></div>';
+}
+function exSet(i,k,v){DRAFT.tour.examples[i][k]=v;}
+function exDel(i){DRAFT.tour.examples.splice(i,1);render();}
+function draftAddExample(){DRAFT.tour.examples.push({label:'New business',tier:'',worker:'Worker',role:'',jobs:[{k:'',t:''}],objective:''});render();}
+function exJob(i,ji,k,v){DRAFT.tour.examples[i].jobs[ji][k]=v;}
+function exJobDel(i,ji){DRAFT.tour.examples[i].jobs.splice(ji,1);render();}
+function exJobAdd(i){(DRAFT.tour.examples[i].jobs=DRAFT.tour.examples[i].jobs||[]).push({k:'',t:''});render();}
+function renderLearnerEdit(){
+  const d=DRAFT;let h='';
+  h+='<div class="ed-hint">Editing the published copy. <b>Save</b> writes to your guide.json; <b>Republish</b> pushes it to the live URL. Only you see this — onboardees never get edit controls.</div>';
+  h+=edCard('Onboard','start here',edText('onboard.summary','Summary',d.onboard.summary,2)+d.onboard.entries.map((e,i)=>edEntry('onboard',i,e)).join('')+edAddBtn("draftAdd('onboard')",'+ Add onboard item'));
+  h+=edCard('Tour','curriculum',edText('tour.summary','Tour summary',d.tour.summary,3)+'<div class="ed-hint" style="margin-top:8px">The tour’s step-by-step lessons are authored by gee-trainer and aren’t edited here yet — say the word to open those up too.</div>');
+  h+=edCard('Guided-tour examples','the walkthrough','<div class="sum">The businesses a new user picks from in the guided tour — each becomes a tab. Add, swap, or remove freely.</div>'+d.tour.examples.map((x,i)=>edExample(i,x)).join('')+edAddBtn('draftAddExample()','+ Add example'));
+  h+=edCard('What’s New','changelog',edText('changelog.summary','Summary',d.changelog.summary,2)+'<div class="ed-hint" style="margin-top:2px">Version-bump lines are captured automatically by version-watch; these are your own notes on top.</div>'+d.changelog.entries.map((e,i)=>edEntry('changelog',i,e)).join('')+edAddBtn("draftAdd('changelog')",'+ Add note'));
+  $('#root').innerHTML=h;
+}
+function syncEditBar(){
+  const show=EDITING&&VIEW==='learner'&&canEdit();let bar=$('#editbar');const main=document.querySelector('main');
+  if(!show){if(bar)bar.remove();if(main)main.classList.remove('editing');return;}
+  if(!bar){bar=document.createElement('div');bar.id='editbar';bar.className='editbar';bar.innerHTML='<span class="msg">Editing published copy — visible only to you</span><button class="btn ghost sm" onclick="stopEdit()">Done</button><button class="btn sm" id="btn-save" onclick="saveContent(this)">Save</button><button class="btn sm" id="btn-pub" style="background:var(--warning);border-color:var(--warning);color:var(--bg-base)" onclick="republish(this)">Republish</button>';document.body.appendChild(bar);}
+  if(main)main.classList.add('editing');
+}
+function saveContent(btn){
+  if(!DRAFT)return;if(btn){btn.disabled=true;btn.textContent='Saving…';}
+  fetch('/api/save-content',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(DRAFT)})
+    .then(r=>r.json()).then(d=>{if(btn){btn.disabled=false;btn.textContent='Save';}if(d.ok){toast('Saved to guide.json.');refreshState();}else{toast('Save failed: '+(d.error||'error'));}})
+    .catch(()=>{if(btn){btn.disabled=false;btn.textContent='Save';}toast('Could not reach backend.');});
+}
+function republish(btn){
+  if(btn){btn.disabled=true;btn.textContent='Publishing…';}
+  fetch('/api/publish',{method:'POST'}).then(r=>r.json()).then(d=>{if(btn){btn.disabled=false;btn.textContent='Republish';}if(d.ok){const g=d.git_sync||{};toast(g.ok?(g.pushed?'Republished + pushed to the live URL.':'Republished — nothing new to push.'):'Published locally; push skipped ('+(g.reason||'no repo')+').');}else{toast('Publish failed: '+(d.error||'error'));}})
+    .catch(()=>{if(btn){btn.disabled=false;btn.textContent='Republish';}toast('Could not reach backend.');});
 }
 load();
 </script>

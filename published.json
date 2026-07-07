@@ -1,6 +1,6 @@
 {
   "schema": 2,
-  "updated_at": "2026-07-02T21:05:00Z",
+  "updated_at": "2026-07-07T18:38:50.225304Z",
   "version": {
     "anchor": "0.71.2"
   },
@@ -10,24 +10,24 @@
       "entries": [
         {
           "title": "Take the guided tour",
+          "note": "A guided in-Terminal walkthrough, opened right here in the sidebar. Honest heads-up: it's still being reworked to connect to the live product rather than just describe it.",
           "action": "open-panel",
-          "panel_id": "gee-onboarding-tour",
-          "note": "A guided in-Terminal walkthrough, opened right here in the sidebar. Honest heads-up: it's still being reworked to connect to the live product rather than just describe it."
+          "panel_id": "gee-onboarding-tour"
         },
         {
           "title": "Spaces",
-          "where": "top bar",
-          "note": "Each space is its own workspace — separate panels, notepad, and focus. Switch spaces to switch projects without losing your place."
+          "note": "Each space is its own workspace — separate panels, notepad, and focus. Switch spaces to switch projects without losing your place.",
+          "where": "top bar"
         },
         {
           "title": "Bricks & the sidebar",
-          "where": "Shift+Cmd+D → letter",
-          "note": "Bricks are live mini-apps docked in the sidebar, each opened by its own hotkey — this guide is one of them. Press B for the Bricks browser to see everything you've got."
+          "note": "Bricks are live mini-apps docked in the sidebar, each opened by its own hotkey — this guide is one of them. Press B for the Bricks browser to see everything you've got.",
+          "where": "Shift+Cmd+D → letter"
         },
         {
           "title": "The notepad",
-          "where": "per space",
-          "note": "A shared markdown scratchpad your Gees read and write in real time — drop a note, a plan, or a bit of context and they'll pick it up on their next pass."
+          "note": "A shared markdown scratchpad your Gees read and write in real time — drop a note, a plan, or a bit of context and they'll pick it up on their next pass.",
+          "where": "per space"
         },
         {
           "title": "Your Gees",
@@ -35,8 +35,8 @@
         },
         {
           "title": "This guide, two ways",
-          "where": "Shift+Cmd+D → G",
-          "note": "Learner (you're here) is what to know — onboarding, a guided tour, and what's new. Flip to Cockpit to get set up: download the Terminal, create your first Gee, and work the checklist."
+          "note": "Learner (you're here) is what to know — onboarding, a guided tour, and what's new. Flip to Cockpit to get set up: download the Terminal, create your first Gee, and work the checklist.",
+          "where": "Shift+Cmd+D → G"
         }
       ]
     },
@@ -127,6 +127,140 @@
           ]
         }
       ],
+      "examples": [
+        {
+          "label": "Home services",
+          "tier": "HVAC, plumbing, electrical",
+          "worker": "Dispatch",
+          "role": "Billing, booking and job records",
+          "jobs": [
+            {
+              "k": "Billing",
+              "t": "Chases the unpaid invoice the day it ages past terms — in your shop's voice, not a robot's."
+            },
+            {
+              "k": "Booking",
+              "t": "Turns a missed call into a booked service window before the lead goes cold."
+            },
+            {
+              "k": "Job records",
+              "t": "Files the warranty, the photos, and the notes against the right job, so you can find them in a year."
+            }
+          ],
+          "objective": "Chase every invoice the day it ages past terms, and each Monday show me the jobs that are done but still unbilled.",
+          "key": "home"
+        },
+        {
+          "label": "Field services",
+          "tier": "landscaping, pool, pest, cleaning",
+          "worker": "Routes",
+          "role": "Routes, renewals and rebooks",
+          "jobs": [
+            {
+              "k": "Routes",
+              "t": "Confirms tomorrow's stops the night before, so the crew rolls without you texting everyone."
+            },
+            {
+              "k": "Weather",
+              "t": "Re-books the rained-out visit and tells the customer — you never touch the calendar."
+            },
+            {
+              "k": "Renewals",
+              "t": "Flags the client who hasn't renewed for the season while there's still time to ask."
+            }
+          ],
+          "objective": "Confirm tomorrow's stops every evening, re-book anything rained out, and flag clients who haven't renewed for the season.",
+          "key": "field"
+        },
+        {
+          "label": "Auto repair",
+          "tier": "auto repair, tire and service shops",
+          "worker": "Service Desk",
+          "role": "Status, approvals and reminders",
+          "jobs": [
+            {
+              "k": "Status",
+              "t": "Texts the customer the moment the car's ready, in your shop's voice."
+            },
+            {
+              "k": "Approvals",
+              "t": "Chases the estimate that's been sitting unanswered, so the bay isn't tied up waiting."
+            },
+            {
+              "k": "Reminders",
+              "t": "Tells the regulars when service is due — before they drift back to the dealer."
+            }
+          ],
+          "objective": "Text customers the moment their car is ready, chase any estimate sitting unanswered, and keep the due-for-service list warm.",
+          "key": "auto"
+        },
+        {
+          "label": "Accounting firm",
+          "tier": "bookkeeping and accounting firms",
+          "worker": "Close",
+          "role": "Close prep and client comms",
+          "jobs": [
+            {
+              "k": "Close prep",
+              "t": "Chases the missing client docs before month-end, not at 9pm on the 28th."
+            },
+            {
+              "k": "Client comms",
+              "t": "Drafts each client's monthly email straight off the numbers, in your firm's tone."
+            },
+            {
+              "k": "Review",
+              "t": "Flags the client whose books look off this month, so a human looks before it ships."
+            }
+          ],
+          "objective": "Run the pre-close checklist on every client in parallel, and chase missing docs before month-end — not at 9pm on the 28th.",
+          "key": "cas"
+        },
+        {
+          "label": "Med spa",
+          "tier": "med spas and aesthetics clinics",
+          "worker": "Front Desk",
+          "role": "Bookings, aftercare and consults",
+          "jobs": [
+            {
+              "k": "Bookings",
+              "t": "Confirms appointments and fills a cancellation off the waitlist before the chair goes empty."
+            },
+            {
+              "k": "Aftercare",
+              "t": "Sends the right aftercare and the rebook reminder on schedule, per treatment."
+            },
+            {
+              "k": "Consults",
+              "t": "Follows up on the consult that didn't book the same day, while interest is still warm."
+            }
+          ],
+          "objective": "Confirm appointments, fill cancellations off the waitlist, and follow up on every consult that didn't book the same day.",
+          "key": "medspa"
+        },
+        {
+          "label": "Real estate team",
+          "tier": "real estate teams and brokerages",
+          "worker": "Lead Desk",
+          "role": "Lead follow-up and transactions",
+          "jobs": [
+            {
+              "k": "Speed to lead",
+              "t": "Follows up with every new lead inside the hour, in your voice — even mid-showing."
+            },
+            {
+              "k": "Transactions",
+              "t": "Keeps each listing moving: photos, disclosures, signatures, deadlines."
+            },
+            {
+              "k": "Past clients",
+              "t": "Nudges the one-year-ago buyer with something useful, so referrals keep coming."
+            }
+          ],
+          "objective": "Follow up with every new lead inside the hour in my voice, and keep each active listing's photos, disclosures, and deadlines moving.",
+          "key": "realestate"
+        }
+      ],
       "empty_state": "Curriculum not authored yet."
     },
     "changelog": {
@@ -167,7 +301,7 @@
         {
           "id": "connect-tools",
           "title": "Connect your tools",
-          "note": "Calendar, email, Drive, your bank — connect an account once so your Gee can act there for you.",
+          "note": "Calendar, email, Drive, your bank — connect an account once so your Gee can act there for you. Bring your model(s), too.",
           "action": "guide"
         },
         {
@@ -199,5 +333,5 @@
     "instruments": [],
     "recommendations_empty": "No recommendation yet. Fill the interview in the Interview tab, or hand over a document there, and Gee maps it — preferring the filled interview and falling back to the document when the interview is empty — into a recommendation here: first workflow, first Gee(s), connectors, and the autonomy dial. It reads only real answers; it never invents them."
   },
-  "published_at": "2026-07-07T15:27:52.111477Z"
+  "published_at": "2026-07-07T18:39:27.941360Z"
 }
