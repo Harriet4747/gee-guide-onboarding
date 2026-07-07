@@ -304,7 +304,7 @@
       "note": "Dev channel — the build the Terminal auto-updates from"
     },
     "setup": {
-      "summary": "Get set up one step at a time. Create your first Gee right here; the rest launch the real screen or get walked through.",
+      "summary": "Create your first Gee here, then bring it alive: connect the tool it works in, give it its standing job, set the one approval gate, and put it on a schedule. Every dial stays tunable in its settings.",
       "steps": [
         {
           "id": "create-gee",
@@ -321,29 +321,38 @@
         },
         {
           "id": "connect-tools",
-          "title": "Connect your tools",
-          "note": "Calendar, email, Drive, your bank — connect an account once so your Gee can act there for you. Bring your model(s), too.",
-          "action": "guide"
+          "title": "Connect the tool it works in",
+          "note": "Your Gee acts inside the tools you already use. Connect the one it needs first — email, calendar, Drive — so it can do the work, not just talk about it. Bring your model(s) here too.",
+          "action": "guide",
+          "where": "Connections"
         },
         {
-          "id": "make-space",
-          "title": "Make a Space for a project",
-          "note": "A dedicated room for one project or one Gee, with its own panels and notepad.",
-          "action": "guide"
+          "id": "brief-it",
+          "title": "Give it its standing job",
+          "note": "Tell it in plain words the job you want it holding — like briefing a sharp new hire. That standing brief is what it works between the times you talk.",
+          "action": "guide",
+          "where": "message your Gee"
         },
         {
-          "id": "see-it-live",
-          "title": "See it live",
-          "note": "A guided walkthrough of the Terminal, opened right here in the sidebar.",
-          "action": "open-panel",
-          "panel_id": "gee-onboarding-tour"
+          "id": "set-gate",
+          "title": "Set the one approval gate",
+          "note": "Decide what it does on its own and what waits for your yes. Any send, spend, or change can hold for approval — set the line and you can turn it loose without worrying.",
+          "action": "guide",
+          "where": "the Gee's settings"
         },
         {
-          "id": "browse-bricks",
-          "title": "Browse your Bricks",
-          "note": "The mini-apps docked in your sidebar — this Guide is one. Open the Bricks browser to see them all.",
-          "action": "open-panel",
-          "panel_id": "brick:bricks:main"
+          "id": "schedule-it",
+          "title": "Put it on a schedule",
+          "note": "Give it a recurring beat — a morning check, a Monday summary — so it moves the work without you asking each time.",
+          "action": "guide",
+          "where": "the Gee's settings"
+        },
+        {
+          "id": "fine-tune",
+          "title": "Fine-tune it anytime",
+          "note": "Everything you set at creation is a dial you can change later: how much it runs on its own, what needs your approval, which model it uses, its budget, and its schedule. They all live in the Gee's settings.",
+          "action": "guide",
+          "where": "the Gee's settings"
         }
       ]
     }
@@ -354,5 +363,5 @@
     "instruments": [],
     "recommendations_empty": "No recommendation yet. Fill the interview in the Interview tab, or hand over a document there, and Gee maps it — preferring the filled interview and falling back to the document when the interview is empty — into a recommendation here: first workflow, first Gee(s), connectors, and the autonomy dial. It reads only real answers; it never invents them."
   },
-  "published_at": "2026-07-07T21:01:55.450867Z"
+  "published_at": "2026-07-07T21:33:11.530366Z"
 }

@@ -238,7 +238,16 @@ function setupCard(c){
   const s=(c.setup)||{};const steps=(s.steps||[]);
   if(!steps.length)return '';
   const prog=(s.total?(s.done_count||0)+'/'+s.total+' done':'');
-  return '<div class="card"><h2>Set up<span class="src">'+esc(prog)+'</span></h2>'+(s.summary?'<div class="sum">'+esc(s.summary)+'</div>':'')+steps.map(stepHtml).join('')+'</div>';
+  const prov=steps.find(x=>x.action==='provision');
+  const created=!!(prov&&(prov.done||prov.gee));
+  let title='Set up';
+  let lead=(s.summary?'<div class="sum">'+esc(s.summary)+'</div>':'');
+  if(created){
+    title='Bring it alive';
+    const nm=(prov&&(prov.gee_display||prov.gee))||'';
+    lead='<div class="sum">'+(nm?'<b>'+esc(nm)+'</b> is live — now the few things that get it working:':'Your Gee is live — now the few things that get it working:')+'</div>';
+  }
+  return '<div class="card"><h2>'+esc(title)+'<span class="src">'+esc(prog)+'</span></h2>'+lead+steps.map(stepHtml).join('')+'</div>';
 }
 function stepHtml(s){
   const done=!!s.done;
@@ -257,7 +266,8 @@ function stepHtml(s){
   }
   const req=s.requested?' <span class="pill queued">requested</span>':'';
   const made=s.gee?' <span class="pill done">created · '+esc(s.gee_display||s.gee)+'</span>':'';
-  let html='<div class="step">'+chk+'<div class="sbody"><div class="st">'+esc(s.title)+req+made+'</div>'+(note?'<div class="sn">'+esc(note)+'</div>':'')+'</div><div class="sact">'+act+'</div></div>';
+  const where=s.where?(/Shift|Cmd|Ctrl|⌘/.test(s.where)?' <span class="badge kbd">'+esc(s.where)+'</span>':' <span class="badge">'+esc(s.where)+'</span>'):'';
+  let html='<div class="step">'+chk+'<div class="sbody"><div class="st">'+esc(s.title)+req+made+where+'</div>'+(note?'<div class="sn">'+esc(note)+'</div>':'')+'</div><div class="sact">'+act+'</div></div>';
   if(s.action==='provision'&&!PREVIEW)html+=provisionForm(s);
   return html;
 }
