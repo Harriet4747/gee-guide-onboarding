@@ -100,6 +100,17 @@
   .ccard .ch .ic{line-height:0}
   .ccard .cb{font-size:13.5px;color:var(--dim);line-height:1.5}
 
+  /* crystallized brick (stop 8) */
+  .brick{margin-top:22px;border:1px solid var(--line);border-radius:14px;background:var(--panel);overflow:hidden;animation:rise .28s ease}
+  .brick .bflow-row{display:flex;gap:12px;padding:15px 18px;border-bottom:1px solid var(--line);align-items:flex-start}
+  .brick .bmark{color:var(--green);font-size:11px;letter-spacing:.06em;text-transform:uppercase;min-width:82px;flex:none;padding-top:3px}
+  .brick .bflow{font-size:14.5px;color:var(--ink);line-height:1.45}
+  .brick .bhome{display:flex;align-items:center;gap:13px;padding:16px 18px;background:var(--panel-2)}
+  .brick .bicon{width:40px;height:40px;border-radius:11px;display:grid;place-items:center;flex:none;background:linear-gradient(135deg,var(--gold-soft),var(--gold))}
+  .brick .bicon svg{width:20px;height:20px;stroke:#1a1304;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+  .brick .bname{font-weight:650;font-size:16.5px}
+  .brick .bdoes{font-size:12.9px;color:var(--faint);margin-top:2px;line-height:1.45}
+
   /* CTA */
   .cta-wrap{margin-top:32px;display:flex;flex-direction:column;gap:13px;align-items:flex-start}
   button.cta{appearance:none;border:0;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:10px;background:linear-gradient(135deg,var(--gold-soft),var(--gold));color:#1a1304;font-weight:680;font-size:17px;padding:15px 26px;border-radius:12px;transition:transform .12s ease,box-shadow .12s ease;box-shadow:0 0 0 0 rgba(216,166,87,0)}
@@ -126,7 +137,7 @@
 <body>
 
 <div class="brand"><span class="g">G</span><span>Gee</span></div>
-<div class="counter" id="counter">01 / 08</div>
+<div class="counter" id="counter">01 / 09</div>
 <nav class="rail" id="rail" aria-label="Tour progress"></nav>
 
 <main id="main">
@@ -232,20 +243,26 @@
       <p class="lede">You're not stuck watching a screen. Every project gets its own <strong>Space</strong>, you both scribble in the same <strong>notepad</strong>, and when your worker needs a yes or has something to show, it comes to you &mdash; a text, a chat, or a tap on your phone.</p>
       <div class="ctrl-cards">
         <div class="ccard"><div class="ch"><span class="ic"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18"/><path d="M9 9v11"/></svg></span>A room per project</div><div class="cb">Every Space carries its own panels and notepad, so a client job never bleeds into your books or your marketing.</div></div>
-        <div class="ccard"><div class="ch"><span class="ic"><svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M9 12h7M9 16h5"/></svg></span>A notepad you both write in</div><div class="cb">A shared scratchpad in every Space. Drop a note, a link, a half-formed plan; your worker reads it on its next pass and picks up where you left off.</div></div>
         <div class="ccard"><div class="ch"><span class="ic"><svg viewBox="0 0 24 24"><rect x="7" y="3" width="10" height="18" rx="2.5"/><path d="M11 18h2"/></svg></span>In your pocket</div><div class="cb">It pings you where you already are &mdash; a text or a chat &mdash; and the Gee app keeps your workers on your phone, so you can check in or approve a send from anywhere.</div></div>
-      </div>
-      <div class="control">
-        <span class="ic"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M17.5 14v7M14 17.5h7"/></svg></span>
-        <div class="ct">The longer you two work like this, the more you'll catch the same job coming round again &mdash; the Monday recap, the same three-step follow-up. That's a <b>workflow</b>, and when one earns its keep you turn it into a <b>Brick</b>: its own small app in the sidebar, a shared home for that work. You build those from the Cockpit.</div>
       </div>
     </div>
   </section>
 
-  <!-- 08 stay in control + CTA -->
-  <section id="s7" data-label="Stay in control">
+  <!-- 08 turn it into a Brick -->
+  <section id="s7" data-label="Turn it into a Brick">
     <div class="wrap">
-      <div class="eyebrow"><span class="num">08</span><span class="bar"></span>Stay in control</div>
+      <div class="eyebrow"><span class="num">08</span><span class="bar"></span>Turn it into a Brick</div>
+      <h1>Routine work? Give it a <span class="accent">home.</span></h1>
+      <p class="lede">When the same job keeps coming round &mdash; the Monday recap, the same three-step follow-up &mdash; that's a <strong>workflow</strong>. When one earns its keep, crystallize it into a <strong>Brick</strong>: its own small app in the sidebar, a shared home for that work that you and your worker both keep live. This Guide you're reading is one.</p>
+      <div class="brick" id="brick" aria-live="polite"></div>
+      <p class="caption">You build these from the Cockpit, once a workflow proves it's worth keeping. Open any Brick by a hotkey; your worker keeps its state current in the background.</p>
+    </div>
+  </section>
+
+  <!-- 09 stay in control + CTA -->
+  <section id="s8" data-label="Stay in control">
+    <div class="wrap">
+      <div class="eyebrow"><span class="num">09</span><span class="bar"></span>Stay in control</div>
       <h1>It's powerful because <span class="accent">you set the rules.</span></h1>
       <p class="lede">Three dials keep a worker firmly yours. Set them when you create it; change them anytime.</p>
       <div class="ctrl-cards">
@@ -272,42 +289,48 @@
        {k:"Booking", t:"Turns a missed call into a booked service window before the lead goes cold."},
        {k:"Job records", t:"Files the warranty, the photos, and the notes against the right job, so you can find them in a year."}
      ],
-     objective:"Chase every invoice the day it ages past terms, and each Monday show me the jobs that are done but still unbilled."},
+     objective:"Chase every invoice the day it ages past terms, and each Monday show me the jobs that are done but still unbilled.",
+     brick:{workflow:"Every job runs the same loop — missed call, booked window, invoice, then the follow-up when it ages.", name:"Dispatch Board", does:"Today's calls, open jobs, and unpaid invoices in one panel — you and Dispatch on the same board."}},
     {key:"field", label:"Field services", tier:"landscaping, pool, pest, cleaning", worker:"Routes", role:"Routes, renewals and rebooks",
      jobs:[
        {k:"Routes", t:"Confirms tomorrow's stops the night before, so the crew rolls without you texting everyone."},
        {k:"Weather", t:"Re-books the rained-out visit and tells the customer — you never touch the calendar."},
        {k:"Renewals", t:"Flags the client who hasn't renewed for the season while there's still time to ask."}
      ],
-     objective:"Confirm tomorrow's stops every evening, re-book anything rained out, and flag clients who haven't renewed for the season."},
+     objective:"Confirm tomorrow's stops every evening, re-book anything rained out, and flag clients who haven't renewed for the season.",
+     brick:{workflow:"Every evening, the same pass — confirm tomorrow's stops, reshuffle the rain-outs, flag who's due to renew.", name:"Route Board", does:"Tomorrow's route, the weather holds, and renewals coming up — one panel Routes keeps current overnight."}},
     {key:"auto", label:"Auto repair", tier:"auto repair, tire and service shops", worker:"Service Desk", role:"Status, approvals and reminders",
      jobs:[
        {k:"Status", t:"Texts the customer the moment the car's ready, in your shop's voice."},
        {k:"Approvals", t:"Chases the estimate that's been sitting unanswered, so the bay isn't tied up waiting."},
        {k:"Reminders", t:"Tells the regulars when service is due — before they drift back to the dealer."}
      ],
-     objective:"Text customers the moment their car is ready, chase any estimate sitting unanswered, and keep the due-for-service list warm."},
+     objective:"Text customers the moment their car is ready, chase any estimate sitting unanswered, and keep the due-for-service list warm.",
+     brick:{workflow:"Every car runs the same arc — ready, text the customer, chase the approval, remind them when service is due.", name:"Bay Board", does:"Every car in the shop with its status, the approvals still sitting, and who's due back in."}},
     {key:"cas", label:"Accounting firm", tier:"bookkeeping and accounting firms", worker:"Close", role:"Close prep and client comms",
      jobs:[
        {k:"Close prep", t:"Chases the missing client docs before month-end, not at 9pm on the 28th."},
        {k:"Client comms", t:"Drafts each client's monthly email straight off the numbers, in your firm's tone."},
        {k:"Review", t:"Flags the client whose books look off this month, so a human looks before it ships."}
      ],
-     objective:"Run the pre-close checklist on every client in parallel, and chase missing docs before month-end — not at 9pm on the 28th."},
+     objective:"Run the pre-close checklist on every client in parallel, and chase missing docs before month-end — not at 9pm on the 28th.",
+     brick:{workflow:"Every month-end is the same checklist, run across every client at once.", name:"Close Tracker", does:"Each client's close in one grid — docs in, email drafted, reviewed, sent."}},
     {key:"medspa", label:"Med spa", tier:"med spas and aesthetics clinics", worker:"Front Desk", role:"Bookings, aftercare and consults",
      jobs:[
        {k:"Bookings", t:"Confirms appointments and fills a cancellation off the waitlist before the chair goes empty."},
        {k:"Aftercare", t:"Sends the right aftercare and the rebook reminder on schedule, per treatment."},
        {k:"Consults", t:"Follows up on the consult that didn't book the same day, while interest is still warm."}
      ],
-     objective:"Confirm appointments, fill cancellations off the waitlist, and follow up on every consult that didn't book the same day."},
+     objective:"Confirm appointments, fill cancellations off the waitlist, and follow up on every consult that didn't book the same day.",
+     brick:{workflow:"Every day, the same rhythm — confirm the chairs, fill cancellations, send aftercare, chase the consults.", name:"Front Desk Board", does:"Today's chairs, the waitlist, aftercare due, and consults still open — one shared panel."}},
     {key:"realestate", label:"Real estate team", tier:"real estate teams and brokerages", worker:"Lead Desk", role:"Lead follow-up and transactions",
      jobs:[
        {k:"Speed to lead", t:"Follows up with every new lead inside the hour, in your voice — even mid-showing."},
        {k:"Transactions", t:"Keeps each listing moving: photos, disclosures, signatures, deadlines."},
        {k:"Past clients", t:"Nudges the one-year-ago buyer with something useful, so referrals keep coming."}
      ],
-     objective:"Follow up with every new lead inside the hour in my voice, and keep each active listing's photos, disclosures, and deadlines moving."}
+     objective:"Follow up with every new lead inside the hour in my voice, and keep each active listing's photos, disclosures, and deadlines moving.",
+     brick:{workflow:"Every lead gets the same first hour; every listing marches the same photos, disclosures, signatures, deadlines.", name:"Deal Board", does:"Each lead's follow-up clock and each listing's next deadline, in one place you both watch."}}
   ];
   var VERTS = FALLBACK_VERTS;
 
@@ -315,6 +338,7 @@
   var tierEl = document.getElementById('tier');
   var workerEl = document.getElementById('worker');
   var objEl = document.getElementById('objective');
+  var brickEl = document.getElementById('brick');
   var picked = -1;
   var tabEls = [];
 
@@ -346,6 +370,16 @@
       '<div><div class="wname">' + v.worker + '</div><div class="wrole">' + v.role + ' &middot; your ' + v.label.toLowerCase() + ' worker</div></div></div>' +
       '<div class="wjobs">' + jobs + '</div>';
     objEl.textContent = '"' + v.objective + '"';
+    var b = v.brick;
+    if(b){
+      brickEl.style.display = '';
+      brickEl.innerHTML =
+        '<div class="bflow-row"><span class="bmark">The workflow</span><span class="bflow">' + b.workflow + '</span></div>' +
+        '<div class="bhome"><div class="bicon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M17.5 14v7M14 17.5h7"/></svg></div>' +
+        '<div><div class="bname">' + b.name + '</div><div class="bdoes">' + b.does + '</div></div></div>';
+    } else {
+      brickEl.style.display = 'none';
+    }
   }
 
   function applyExamples(list){

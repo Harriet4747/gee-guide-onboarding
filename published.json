@@ -25,11 +25,6 @@
           "where": "Shift+Cmd+D → letter"
         },
         {
-          "title": "The notepad",
-          "note": "A shared markdown scratchpad your Gees read and write in real time — drop a note, a plan, or a bit of context and they'll pick it up on their next pass.",
-          "where": "per space"
-        },
-        {
           "title": "Your Gees",
           "note": "Your workers — same engine, different jobs. You brief each one on what it does; add more as the work grows, and they can hand work off to each other."
         },
@@ -97,10 +92,6 @@
               "note": "Spin one up for each effort or each worker, so everything for it lives in one place. Move between them without losing where you left off."
             },
             {
-              "title": "The notepad",
-              "note": "A shared scratchpad in every Space your Gees read and write in real time. Drop a note, a plan, or a bit of context and they pick it up on their next pass."
-            },
-            {
               "title": "Put work on a schedule",
               "note": "Give a Gee a standing order — a recurring beat, like a Monday-morning summary — or an objective, a longer goal it keeps chipping at. The work happens without you asking each time."
             }
@@ -148,6 +139,11 @@
             }
           ],
           "objective": "Chase every invoice the day it ages past terms, and each Monday show me the jobs that are done but still unbilled.",
+          "brick": {
+            "workflow": "Every job runs the same loop — missed call, booked window, invoice, then the follow-up when it ages.",
+            "name": "Dispatch Board",
+            "does": "Today's calls, open jobs, and unpaid invoices in one panel — you and Dispatch on the same board."
+          },
           "key": "home"
         },
         {
@@ -170,6 +166,11 @@
             }
           ],
           "objective": "Confirm tomorrow's stops every evening, re-book anything rained out, and flag clients who haven't renewed for the season.",
+          "brick": {
+            "workflow": "Every evening, the same pass — confirm tomorrow's stops, reshuffle the rain-outs, flag who's due to renew.",
+            "name": "Route Board",
+            "does": "Tomorrow's route, the weather holds, and renewals coming up — one panel Routes keeps current overnight."
+          },
           "key": "field"
         },
         {
@@ -192,6 +193,11 @@
             }
           ],
           "objective": "Text customers the moment their car is ready, chase any estimate sitting unanswered, and keep the due-for-service list warm.",
+          "brick": {
+            "workflow": "Every car runs the same arc — ready, text the customer, chase the approval, remind them when service is due.",
+            "name": "Bay Board",
+            "does": "Every car in the shop with its status, the approvals still sitting, and who's due back in."
+          },
           "key": "auto"
         },
         {
@@ -214,6 +220,11 @@
             }
           ],
           "objective": "Run the pre-close checklist on every client in parallel, and chase missing docs before month-end — not at 9pm on the 28th.",
+          "brick": {
+            "workflow": "Every month-end is the same checklist, run across every client at once.",
+            "name": "Close Tracker",
+            "does": "Each client's close in one grid — docs in, email drafted, reviewed, sent."
+          },
           "key": "cas"
         },
         {
@@ -236,6 +247,11 @@
             }
           ],
           "objective": "Confirm appointments, fill cancellations off the waitlist, and follow up on every consult that didn't book the same day.",
+          "brick": {
+            "workflow": "Every day, the same rhythm — confirm the chairs, fill cancellations, send aftercare, chase the consults.",
+            "name": "Front Desk Board",
+            "does": "Today's chairs, the waitlist, aftercare due, and consults still open — one shared panel."
+          },
           "key": "medspa"
         },
         {
@@ -258,6 +274,11 @@
             }
           ],
           "objective": "Follow up with every new lead inside the hour in my voice, and keep each active listing's photos, disclosures, and deadlines moving.",
+          "brick": {
+            "workflow": "Every lead gets the same first hour; every listing marches the same photos, disclosures, signatures, deadlines.",
+            "name": "Deal Board",
+            "does": "Each lead's follow-up clock and each listing's next deadline, in one place you both watch."
+          },
           "key": "realestate"
         }
       ],
@@ -333,5 +354,5 @@
     "instruments": [],
     "recommendations_empty": "No recommendation yet. Fill the interview in the Interview tab, or hand over a document there, and Gee maps it — preferring the filled interview and falling back to the document when the interview is empty — into a recommendation here: first workflow, first Gee(s), connectors, and the autonomy dial. It reads only real answers; it never invents them."
   },
-  "published_at": "2026-07-07T20:16:41.850771Z"
+  "published_at": "2026-07-07T21:01:55.450867Z"
 }

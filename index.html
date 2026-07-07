@@ -243,8 +243,11 @@ function setupCard(c){
 function stepHtml(s){
   const done=!!s.done;
   const chk='<button class="chk'+(done?' on':'')+'" onclick="toggleStep(\''+esc(s.id)+'\')">'+(done?'✓':'')+'</button>';
-  let act;
-  if(s.action==='provision'){
+  let act;let note=s.note||'';
+  if(s.action==='provision'&&PREVIEW){
+    note='Your first worker — the very first thing you do once the Terminal opens. One tap and it’s live, with safe defaults you can change later.';
+    act='<button class="btn sm" onclick="jumpToDownload()">Download to create it ↓</button>';
+  }else if(s.action==='provision'){
     act='<button class="btn'+(done?' ghost':'')+' sm" onclick="toggleProvision(\''+esc(s.id)+'\')">'+(done?'Create another':esc((s.provision&&s.provision.cta)||'Set it up'))+'</button>';
   }else if(s.action==='open-panel'&&s.panel_id){
     const oc=s.panel_id==='gee-onboarding-tour'?'openTour()':('openPanel(\''+esc(s.panel_id)+'\')');
@@ -254,8 +257,8 @@ function stepHtml(s){
   }
   const req=s.requested?' <span class="pill queued">requested</span>':'';
   const made=s.gee?' <span class="pill done">created · '+esc(s.gee_display||s.gee)+'</span>':'';
-  let html='<div class="step">'+chk+'<div class="sbody"><div class="st">'+esc(s.title)+req+made+'</div>'+(s.note?'<div class="sn">'+esc(s.note)+'</div>':'')+'</div><div class="sact">'+act+'</div></div>';
-  if(s.action==='provision')html+=provisionForm(s);
+  let html='<div class="step">'+chk+'<div class="sbody"><div class="st">'+esc(s.title)+req+made+'</div>'+(note?'<div class="sn">'+esc(note)+'</div>':'')+'</div><div class="sact">'+act+'</div></div>';
+  if(s.action==='provision'&&!PREVIEW)html+=provisionForm(s);
   return html;
 }
 function provisionForm(s){
@@ -272,6 +275,7 @@ function toggleProvision(id){
   const show=el.style.display==='none';el.style.display=show?'flex':'none';
   if(show){const n=document.getElementById('pf-'+id+'-name');if(n)n.focus();}
 }
+function jumpToDownload(){const el=document.getElementById('dl-card');if(el)el.scrollIntoView({behavior:'smooth',block:'start'});toast('Download the Terminal below — your Gee is the first thing you’ll create.');}
 function provisionGee(btn,id){
   if(guard())return;
   const name=((document.getElementById('pf-'+id+'-name')||{}).value||'').trim();
@@ -420,7 +424,7 @@ function absorbDocument(){
 function downloadCard(c){
   const d=(c.download)||{};const links=(d.links||[]);
   if(!links.length && !d.summary)return '';
-  let h='<div class="card"><h2>'+esc(d.title||'Download the Gee Terminal')+'<span class="src">'+esc(d.platform||'start here')+'</span></h2>';
+  let h='<div class="card" id="dl-card"><h2>'+esc(d.title||'Download the Gee Terminal')+'<span class="src">'+esc(d.platform||'start here')+'</span></h2>';
   if(d.summary)h+='<div class="sum">'+esc(d.summary)+'</div>';
   if(links.length){h+='<div class="acts">'+links.map(l=>'<a class="btn" href="'+esc(l.url)+'" target="_blank" rel="noopener">'+esc(l.label||'Download')+'</a>').join('')+'</div>';}
   else{h+='<div class="empty">Download link isn’t set yet.</div>';}
