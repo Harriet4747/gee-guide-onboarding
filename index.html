@@ -74,6 +74,10 @@ button.badge.act:hover{background:var(--accent-subtle)}
 .pill{font-size:9.5px;padding:1px 8px;border-radius:999px;border:1px solid var(--border-strong);color:var(--text-secondary);background:rgba(255,255,255,.04);text-transform:lowercase;white-space:nowrap}
 .pill.queued{color:var(--warning);border-color:var(--warning-border);background:var(--warning-subtle)}
 .pill.done{color:var(--success);border-color:var(--success-border);background:var(--success-subtle)}
+.pill.active,.pill.running,.pill.task-complete,.pill.promotion-approved{color:var(--success);border-color:var(--success-border);background:var(--success-subtle)}
+.pill.cleanup-needed{color:var(--warning);border-color:var(--warning-border);background:var(--warning-subtle)}
+.pill.cleaned-up{color:var(--text-secondary);border-color:var(--border-strong);background:rgba(255,255,255,.04)}
+.pill.failed{color:var(--danger);border-color:rgba(239,68,68,.35);background:rgba(239,68,68,.12)}
 .acts{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .btn{font:600 12px/1 var(--font-sans);color:var(--bg-base);background:var(--accent);border:1px solid var(--accent);border-radius:7px;padding:8px 13px;cursor:pointer}
 .btn.ghost{color:var(--text-secondary);background:var(--bg-surface);border-color:var(--border)}
@@ -132,11 +136,9 @@ main.editing{padding-bottom:66px}
   <div class="brand"><span class="ico"><span class="gmark">g</span><span class="smile">:)</span></span><h1>Gee Guide</h1></div>
   <div id="ver" class="ver">…</div>
   <div style="display:flex;align-items:center;gap:9px">
-    <button id="edit-toggle" class="edit-toggle" onclick="toggleEdit()">✎ Edit</button>
-    <div class="toggle">
-      <button id="tab-learner" class="on" onclick="setView('learner')">Learner</button>
+    <div class="toggle" id="viewtoggle">
+      <button id="tab-cockpit" class="on" onclick="setView('cockpit')">Cockpit</button>
       <button id="tab-interview" onclick="setView('interview')">Interview</button>
-      <button id="tab-cockpit" onclick="setView('cockpit')">Cockpit</button>
     </div>
   </div>
 </div>
@@ -144,14 +146,14 @@ main.editing{padding-bottom:66px}
 <main id="root"><div class="empty">Loading…</div></main>
 <div id="toast" class="toast"></div>
 <script>
-let STATE=null, VIEW='learner', INTERVIEW_INSTRUMENT=null;
+let STATE=null, VIEW='cockpit', INTERVIEW_INSTRUMENT=null;
 const $=s=>document.querySelector(s);
 function esc(s){return (s==null?'':String(s)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
 let PREVIEW=false;
 const PREVIEW_MSG='Preview of what a partner sees — the setup steps run on their own Terminal install.';
 function isAuthor(){return ((STATE&&STATE.product_source&&STATE.product_source.mode)||'author')!=='onboardee';}
 function guard(){if(PREVIEW){toast(PREVIEW_MSG);return true;}return false;}
-function applyMode(){const q=(STATE&&STATE.questionnaires)||{};const hasInst=((q.instruments)||[]).length>0;const showIv=isAuthor()||hasInst;const itab=$('#tab-interview');if(itab)itab.style.display=showIv?'':'none';if(!showIv&&VIEW==='interview')VIEW='learner';const et=$('#edit-toggle');if(et)et.style.display=canEdit()?'inline-block':'none';if(!canEdit()&&EDITING){EDITING=false;DRAFT=null;}syncEditToggle();}
+function applyMode(){const q=(STATE&&STATE.questionnaires)||{};const hasInst=((q.instruments)||[]).length>0;const showIv=isAuthor()||hasInst;const itab=$('#tab-interview');if(itab)itab.style.display=showIv?'':'none';const tg=$('#viewtoggle');if(tg)tg.style.display=showIv?'':'none';if(!showIv&&VIEW==='interview')VIEW='cockpit';}
 
 async function load(){
   let ok=false;
@@ -180,60 +182,9 @@ function renderVer(){
   if(v.delta){h+='<span class="dl">· delta</span>';}
   $('#ver').innerHTML=h;
 }
-function setView(v){VIEW=v;['learner','interview','cockpit'].forEach(x=>{const b=$('#tab-'+x);if(b)b.classList.toggle('on',v===x);});render();}
-function render(){if(!STATE)return;if(VIEW==='cockpit'){renderCockpit();}else if(VIEW==='interview'){renderInterview();}else{renderLearner();}syncEditBar();}
+function setView(v){VIEW=v;['cockpit','interview'].forEach(x=>{const b=$('#tab-'+x);if(b)b.classList.toggle('on',v===x);});render();}
+function render(){if(!STATE)return;if(VIEW==='interview'){renderInterview();}else{renderCockpit();}}
 
-function entryHtml(e){
-  let badge='';
-  if(e.action==='open-panel'&&e.panel_id){const oc=e.panel_id==='gee-onboarding-tour'?'openTour()':('openPanel(\''+esc(e.panel_id)+'\')');badge='<button class="badge act" onclick="'+oc+'">open ↗</button>';}
-  else if(e.where&&/Shift|Cmd|Ctrl|⌘/.test(e.where)){badge='<span class="badge kbd">'+esc(e.where)+'</span>';}
-  else if(e.where&&/^https?:/.test(e.where)){badge='<a class="badge" href="'+esc(e.where)+'" target="_blank">open ↗</a>';}
-  else if(e.where){badge='<span class="badge">'+esc(e.where)+'</span>';}
-  return '<div class="entry"><div class="et">'+esc(e.title)+badge+'</div>'+(e.note?'<div class="en">'+esc(e.note)+'</div>':'')+'</div>';
-}
-function pillarCard(title,src,p){
-  if(!p)return '';
-  const entries=(p.entries||[]);
-  let body=entries.length?entries.map(entryHtml).join(''):'<div class="empty">'+esc(p.empty_state||'Nothing here yet.')+'</div>';
-  return '<div class="card"><h2>'+esc(title)+'<span class="src">'+esc(src)+'</span></h2>'+(p.summary?'<div class="sum">'+esc(p.summary)+'</div>':'')+body+'</div>';
-}
-function lessonHtml(e,n){
-  let badge='';
-  if(e.action==='open-panel'&&e.panel_id){const oc=e.panel_id==='gee-onboarding-tour'?'openTour()':('openPanel(\''+esc(e.panel_id)+'\')');badge='<button class="badge act" onclick="'+oc+'">open ↗</button>';}
-  else if(e.where&&/Shift|Cmd|Ctrl|⌘/.test(e.where)){badge='<span class="badge kbd">'+esc(e.where)+'</span>';}
-  else if(e.where&&/^https?:/.test(e.where)){badge='<a class="badge" href="'+esc(e.where)+'" target="_blank">open ↗</a>';}
-  else if(e.where){badge='<span class="badge">'+esc(e.where)+'</span>';}
-  return '<div class="entry lesson"><span class="lnum">'+n+'</span><div class="lbody"><div class="et">'+esc(e.title)+badge+'</div>'+(e.note?'<div class="en">'+esc(e.note)+'</div>':'')+'</div></div>';
-}
-function tourCard(p){
-  if(!p)return '';
-  const mods=(p.modules||[]);
-  if(!mods.length)return pillarCard('Tour','curriculum',p);
-  let body='',n=0;
-  mods.forEach(m=>{
-    body+='<div class="mod"><div class="mod-h"><span class="mod-t">'+esc(m.title)+'</span>'+(m.blurb?'<span class="mod-b">'+esc(m.blurb)+'</span>':'')+'</div>';
-    (m.lessons||[]).forEach(l=>{n++;body+=lessonHtml(l,n);});
-    body+='</div>';
-  });
-  return '<div class="card"><h2>Tour<span class="src">curriculum</span></h2>'+(p.summary?'<div class="sum">'+esc(p.summary)+'</div>':'')+body+'</div>';
-}
-function renderLearner(){
-  if(EDITING&&canEdit()){renderLearnerEdit();return;}
-  const p=(STATE.pillars)||{};
-  let h='';
-  h+=pillarCard('Onboard','start here',p.onboard);
-  h+=tourCard(p.tour);
-  const cl=p.changelog||{};const vh=(STATE.version&&STATE.version.history)||[];
-  let clbody='';
-  if(vh.length){clbody+=vh.map(v=>'<div class="entry"><div class="et"><span class="mono">'+esc(v.from)+' → '+esc(v.to)+'</span><span class="badge">'+esc(v.status||'')+'</span></div>'+(v.note?'<div class="en">'+esc(v.note)+'</div>':'')+'</div>').join('');}
-  const cle=(cl.entries||[]);
-  if(cle.length){clbody+=cle.map(entryHtml).join('');}
-  if(!cle.length&&cl.empty_state){clbody+='<div class="empty">'+esc(cl.empty_state)+'</div>';}
-  if(!clbody){clbody='<div class="empty">No entries yet.</div>';}
-  h+='<div class="card"><h2>What’s New<span class="src">changelog</span></h2>'+(cl.summary?'<div class="sum">'+esc(cl.summary)+'</div>':'')+clbody+'</div>';
-  if(isAuthor())h+='<div class="foot">Content store: state/guide.json'+(STATE.store_updated_at?' · updated '+esc(STATE.store_updated_at):'')+(STATE.store_updated_by?' by '+esc(STATE.store_updated_by):'')+'</div>';
-  $('#root').innerHTML=h;
-}
 function setupCard(c){
   const s=(c.setup)||{};const steps=(s.steps||[]);
   if(!steps.length)return '';
@@ -367,48 +318,125 @@ function absorbQuestionnaire(){
     }).catch(()=>toast('Could not reach backend.'));
 }
 function recHtml(r){
-  let h='<div class="entry"><div class="et">'+esc(r.business||r.title||'Recommendation')+(r.verdict?' <span class="badge">'+esc(r.verdict)+'</span>':'')+(r.level?' <span class="badge kbd">'+esc(r.level)+'</span>':'')+'</div>';
+  let h='<div class="entry"><div class="et">'+esc((r.workflow&&r.workflow.name)||r.business||r.title||'Recommendation')+(r.verdict?' <span class="badge">'+esc(r.verdict)+'</span>':'')+(r.level?' <span class="badge kbd">'+esc(r.level)+'</span>':'')+'</div>';
   if(r.summary)h+='<div class="en">'+esc(r.summary)+'</div>';
-  (r.items||[]).forEach(it=>{h+='<div class="kv"><b>'+esc(it.label||'')+'</b><span>'+esc(it.value||'')+'</span></div>';});
-  if(r.source||r.created_at)h+='<div class="en" style="color:var(--text-muted);font-size:10.5px;margin-top:4px">'+(r.source?'from '+esc(r.source):'')+(r.created_at?' · '+esc(r.created_at):'')+'</div>';
+  const wf=r.workflow;
+  if(wf&&(wf.name||wf.why||wf.metric||wf.human_keeps||wf.representative_task)){
+    h+='<div class="mod"><div class="mod-h"><span class="mod-t">First workflow to install</span><span class="mod-b">lead with the wedge, not the assessment</span></div>';
+    if(wf.name)h+='<div class="kv"><b>Install against</b><span>'+esc(wf.name)+'</span></div>';
+    if(wf.why)h+='<div class="kv"><b>Why this one</b><span>'+esc(wf.why)+'</span></div>';
+    if(wf.human_keeps)h+='<div class="kv"><b>What stays human</b><span>'+esc(wf.human_keeps)+'</span></div>';
+    if(wf.metric)h+='<div class="kv"><b>Before / after</b><span>'+esc(wf.metric)+'</span></div>';
+    if(wf.representative_task)h+='<div class="kv"><b>Representative demo task</b><span>'+esc(wf.representative_task)+'</span></div>';
+    h+='</div>';
+  }
+  const alt=r.alternate_workflow;
+  if(alt&&(alt.name||alt.why||alt.when_to_pivot)){
+    h+='<div class="mod"><div class="mod-h"><span class="mod-t">Second wedge to keep in pocket</span></div>';
+    if(alt.name)h+='<div class="kv"><b>Pivot to</b><span>'+esc(alt.name)+'</span></div>';
+    if(alt.why)h+='<div class="kv"><b>Why it matters</b><span>'+esc(alt.why)+'</span></div>';
+    if(alt.when_to_pivot)h+='<div class="kv"><b>Use when</b><span>'+esc(alt.when_to_pivot)+'</span></div>';
+    h+='</div>';
+  }
+  const gf=(r.gee_force||[]);
+  if(gf.length){
+    h+='<div class="mod"><div class="mod-h"><span class="mod-t">Gee-Force to stand up</span><span class="mod-b">'+gf.length+' real workers</span></div>';
+    gf.forEach(w=>{h+='<div class="entry"><div class="et">'+esc(w.name||'Gee')+(w.role?' <span class="badge">'+esc(w.role)+'</span>':'')+(w.lead?' <span class="badge kbd">lead</span>':'')+'</div>'+(w.owns?'<div class="en">'+esc(w.owns)+'</div>':'')+'</div>';});
+    h+='</div>';
+  }
+  if(r.coordination){h+='<div class="mod"><div class="mod-h"><span class="mod-t">How they coordinate</span></div><div class="en">'+esc(r.coordination)+'</div></div>';}
+  const demo=r.demo_sandbox;
+  if(demo&&(demo.cta||demo.summary||demo.scope)){
+    h+='<div class="mod"><div class="mod-h"><span class="mod-t">Live demo sandbox</span><span class="mod-b">expert-operated</span></div>';
+    if(demo.summary)h+='<div class="en">'+esc(demo.summary)+'</div>';
+    if(demo.scope)h+='<div class="kv"><b>Sandbox</b><span>'+esc(demo.scope)+'</span></div>';
+    if((STATE.cockpit||{}).demo_paused){h+='<div class="empty">Demo sandbox is paused — launch and dispatch are gated off while the run path is rebuilt.</div>';}
+    else{h+='<div class="acts"><button class="btn" onclick="launchDemoSandbox('+esc(JSON.stringify(r.id||''))+')">'+esc(demo.cta||'Launch real demo sandbox')+'</button></div>';}
+    h+='</div>';
+  }
+  const items=(r.items||[]);
+  if(items.length){
+    h+='<div class="mod"><div class="mod-h"><span class="mod-t">Setup</span></div>';
+    items.forEach(it=>{h+='<div class="kv"><b>'+esc(it.label||'')+'</b><span>'+esc(it.value||'')+'</span></div>';});
+    h+='</div>';
+  }
+  if(r.source||r.created_at)h+='<div class="en" style="color:var(--text-muted);font-size:10.5px;margin-top:6px">'+(r.source?'from '+esc(r.source):'')+(r.created_at?' · '+esc(r.created_at):'')+'</div>';
   return h+'</div>';
 }
 function recommendationsCard(){
   const q=(STATE.questionnaires)||{};const rec=(q.recommendations||[]);
   let rb=rec.length?rec.map(recHtml).join(''):'<div class="empty">'+esc(q.recommendations_empty||'No recommendation yet.')+'</div>';
-  return '<div class="card"><h2>Onboarding recommendation<span class="src">per business</span></h2>'+rb+'</div>';
+  return '<div class="card"><h2>Expert recommendation<span class="src">intake → launch manifest</span></h2>'+rb+'</div>';
 }
 function ivFieldId(iid,gi,ii){return 'iv-'+iid+'-'+gi+'-'+ii;}
 function setInterviewInstrument(id){INTERVIEW_INSTRUMENT=id;render();}
+function demoSandboxCard(){
+  const q=(STATE.questionnaires)||{};const demos=(q.demo_sandboxes||[]);
+  if(!demos.length)return '';
+  let h='<div class="card"><h2>Demo sandboxes<span class="src">testbed lifecycle</span></h2>';
+  demos.slice().reverse().slice(0,5).forEach(r=>{
+    const made=(r.created||[]).length,failed=(r.failed||[]).length,tp=r.task_packet||{},sample=tp.sample_deal||{},life=r.lifecycle||{};
+    h+='<div class="entry"><div class="et"><span class="pill '+esc(r.status||life.state||'ready')+'">'+esc(r.status||life.state||'ready')+'</span>'+esc(r.business||'Demo sandbox')+' <span class="badge kbd mono">'+esc(r.id||'')+'</span></div>';
+    h+='<div class="en">'+made+' real Gees'+(failed?' · '+failed+' failed':'')+(r.workflow?' · '+esc(r.workflow):'')+'</div>';
+    if(tp.representative_task)h+='<div class="kv"><b>Task</b><span>'+esc(tp.representative_task)+'</span></div>';
+    if(sample.deal_id)h+='<div class="kv"><b>Sample deal</b><span>'+esc(sample.deal_id)+' · '+esc(sample.stage||'')+'</span></div>';
+    const names=(r.created||[]).map(x=>((x.result||{}).gee)||x.worker).filter(Boolean);
+    if(names.length)h+='<div class="kv"><b>Demo Gees</b><span class="mono">'+esc(names.join(', '))+'</span></div>';
+    const outs=(tp.expected_outputs||[]);
+    if(outs.length)h+='<div class="kv"><b>Outputs</b><span>'+esc(outs.join(' · '))+'</span></div>';
+    const hand=(tp.handoffs||[]).slice(0,4);
+    if(hand.length){h+='<div class="mod"><div class="mod-h"><span class="mod-t">Handoffs</span><span class="mod-b">first four</span></div>';hand.forEach(x=>{h+='<div class="kv"><b>'+esc(x.to||'Worker')+'</b><span>'+esc(x.instruction||'')+'</span></div>';});h+='</div>';}
+    const results=(r.results||[]);
+    if(results.length){
+      h+='<div class="mod"><div class="mod-h"><span class="mod-t">Roster output</span><span class="mod-b">what the demo produced</span></div>';
+      if(r.results_summary)h+='<div class="en">'+esc(r.results_summary)+'</div>';
+      results.forEach(x=>{h+='<div class="kv"><b>'+esc(x.gee||x.role||'Worker')+'</b><span>'+esc(x.output||x.summary||'')+'</span></div>';});
+      h+='</div>';
+    } else if((r.next_action||'')==='await-task-results'){
+      h+='<div class="empty">Task dispatched to gee-trainer — waiting for the roster to run and report back.</div>';
+    }
+    if(life.cleanup_note)h+='<div class="empty">'+esc(life.cleanup_note)+'</div>';
+    h+='<div class="acts">';
+    if(!(STATE.cockpit||{}).demo_paused&&((r.next_action||'')==='run-demo-task'||(life.state||'')==='active'))h+='<button class="btn" onclick="demoSandboxAction('+esc(JSON.stringify(r.id||''))+',\'run-task\')">Start representative task</button>';
+    if((r.next_action||'')==='complete-task'||(life.state||'')==='running')h+='<button class="btn" onclick="demoSandboxAction('+esc(JSON.stringify(r.id||''))+',\'complete-task\')">Mark task complete</button>';
+    h+='<button class="btn" onclick="demoSandboxAction('+esc(JSON.stringify(r.id||''))+',\'request-cleanup\')">Request cleanup</button>';
+    h+='<button class="btn" onclick="demoSandboxAction('+esc(JSON.stringify(r.id||''))+',\'mark-cleaned\')">Mark cleaned</button>';
+    h+='<button class="btn" onclick="demoSandboxAction('+esc(JSON.stringify(r.id||''))+',\'approve-promotion\')">Approve promotion review</button>';
+    h+='</div></div>';
+  });
+  return h+'</div>';
+}
 function intakeActivityCard(){
-  const q=(STATE.questionnaires)||{};const resp=(q.responses||[]);const docs=(q.documents||[]);
-  if(!resp.length&&!docs.length)return '';
-  let h='<div class="card"><h2>Submitted<span class="src">pending gee-trainer</span></h2>';
+  const q=(STATE.questionnaires)||{};const resp=(q.responses||[]);const docs=(q.documents||[]);const demos=(q.demo_sandboxes||[]);
+  if(!resp.length&&!docs.length&&!demos.length)return '';
+  let h='<div class="card"><h2>Activity<span class="src">intake + demo sandbox</span></h2>';
+  demos.slice(0,4).forEach(r=>{const made=(r.created||[]).length,failed=(r.failed||[]).length;h+='<div class="q"><span class="pill '+esc(r.status||'ready')+'">'+esc(r.status||'ready')+'</span><span><b>demo sandbox</b>'+(r.business?' · '+esc(r.business):'')+' · '+made+' Gees'+(failed?' · '+failed+' failed':'')+' <span class="mono" style="color:var(--text-muted);font-size:10.5px">'+esc(r.created_at||'')+'</span></span></div>';});
   resp.slice(0,6).forEach(r=>{h+='<div class="q"><span class="pill '+esc(r.status||'queued')+'">'+esc(r.status||'queued')+'</span><span><b>interview</b>'+(r.instrument_name?' · '+esc(r.instrument_name):'')+(typeof r.answer_count==='number'?' · '+r.answer_count+' answers':'')+' <span class="mono" style="color:var(--text-muted);font-size:10.5px">'+esc(r.created_at||'')+'</span></span></div>';});
   docs.slice(0,6).forEach(r=>{h+='<div class="q"><span class="pill '+esc(r.status||'queued')+'">'+esc(r.status||'queued')+'</span><span><b>document</b> · '+esc(r.url||(r.has_text?'pasted text':''))+' <span class="mono" style="color:var(--text-muted);font-size:10.5px">'+esc(r.created_at||'')+'</span></span></div>';});
   return h+'</div>';
 }
 function renderInterview(){
   const q=(STATE.questionnaires)||{};const inst=(q.instruments||[]);
-  if(!inst.length){$('#root').innerHTML='<div class="card"><h2>Run the intake<span class="src">interview</span></h2><div class="empty">'+(isAuthor()?'No questionnaire absorbed yet. Absorb one from the Cockpit tab first.':'Your intake questions will appear here once they’re set up.')+'</div></div>';return;}
-  const cur=inst.find(i=>i.id===INTERVIEW_INSTRUMENT)||inst[0];
-  let h='<div class="card"><h2>Run the intake<span class="src">interview</span></h2>';
-  h+='<div class="sum">'+esc(q.interview_intro||'Answer what you can and submit — gee-trainer turns it into an onboarding recommendation. Prefer to hand over a document instead? Use the panel below.')+'</div>';
-  if(inst.length>1){h+='<div class="acts">'+inst.map(i=>'<button class="btn '+(i.id===cur.id?'':'ghost')+' sm" onclick="setInterviewInstrument(\''+esc(i.id)+'\')">'+esc(i.name)+'</button>').join('')+'</div>';}
-  h+='</div>';
-  h+='<div class="card"><h2>'+esc(cur.name)+'<span class="src">'+esc(cur.kind||'')+'</span></h2>';
-  (cur.groups||[]).forEach((g,gi)=>{
-    h+='<div class="mod"><div class="mod-h"><span class="mod-t">'+esc(g.title)+'</span></div>';
-    (g.items||[]).forEach((it,ii)=>{const fid=ivFieldId(cur.id,gi,ii);h+='<div class="ivf"><label for="'+fid+'">'+esc(it)+'</label><textarea class="pin" id="'+fid+'" rows="2"></textarea></div>';});
+  let h='<div class="card"><h2>Set up their Gee-Force<span class="src">expert-operated</span></h2>';
+  h+='<div class="sum">'+esc(q.interview_intro||'The Gee expert loads the intake, develops the recommendation in the room, and can launch a real demo sandbox from the recommendation so the candidate sees the proposed Gee-Force run a representative task.')+'</div></div>';
+  h+='<div class="card"><h2>Load intake documents<span class="src">the on-ramp</span></h2><div class="sum">Drop what you have about the business — an overview, notes, a call transcript, a first-meeting playbook, a filled-in intake. Gee reads it and turns it into an expert recommendation plus a sandbox launch manifest.</div><div class="docform"><input class="pin" id="doc-url" placeholder="Google Doc / URL"><textarea class="pin" id="doc-text" rows="3" placeholder="…or paste the text here"></textarea><div class="acts"><button class="btn" onclick="absorbDocument()">Absorb &amp; recommend</button></div></div></div>';
+  if(inst.length){
+    const cur=inst.find(i=>i.id===INTERVIEW_INSTRUMENT)||inst[0];
+    h+='<div class="card"><h2>'+esc(cur.name)+'<span class="src">or fill the form</span></h2>';
+    if(inst.length>1){h+='<div class="acts" style="margin-bottom:9px">'+inst.map(i=>'<button class="btn '+(i.id===cur.id?'':'ghost')+' sm" onclick="setInterviewInstrument(\''+esc(i.id)+'\')">'+esc(i.name)+'</button>').join('')+'</div>';}
+    (cur.groups||[]).forEach((g,gi)=>{
+      h+='<div class="mod"><div class="mod-h"><span class="mod-t">'+esc(g.title)+'</span></div>';
+      (g.items||[]).forEach((it,ii)=>{const fid=ivFieldId(cur.id,gi,ii);h+='<div class="ivf"><label for="'+fid+'">'+esc(it)+'</label><textarea class="pin" id="'+fid+'" rows="2"></textarea></div>';});
+      h+='</div>';
+    });
+    if(cur.ladder&&cur.ladder.length){
+      h+='<div class="mod"><div class="mod-h"><span class="mod-t">Current L</span><span class="mod-b">best guess — the dial to move from</span></div><select class="pin" id="iv-'+esc(cur.id)+'-L"><option value="">—</option>'+cur.ladder.map(l=>'<option value="'+esc(l.level)+'">'+esc(l.level)+' — '+esc(l.label)+'</option>').join('')+'</select></div>';
+    }
+    h+='<div class="acts" style="margin-top:11px"><button class="btn" onclick="submitInterview(\''+esc(cur.id)+'\')">Submit for a recommendation</button></div>';
     h+='</div>';
-  });
-  if(cur.ladder&&cur.ladder.length){
-    h+='<div class="mod"><div class="mod-h"><span class="mod-t">Current L</span><span class="mod-b">best guess — the dial to move from</span></div><select class="pin" id="iv-'+esc(cur.id)+'-L"><option value="">—</option>'+cur.ladder.map(l=>'<option value="'+esc(l.level)+'">'+esc(l.level)+' — '+esc(l.label)+'</option>').join('')+'</select></div>';
   }
-  h+='<div class="acts" style="margin-top:11px"><button class="btn" onclick="submitInterview(\''+esc(cur.id)+'\')">Submit for a recommendation</button></div>';
-  h+='</div>';
-  h+='<div class="card"><h2>Or hand over a document<span class="src">no form needed</span></h2><div class="sum">Don’t want to fill the form? Drop a doc about the business — an overview, notes, a call transcript, a filled-in intake. gee-trainer reads and understands it, then makes the recommendation. This is the fallback when the interview isn’t filled out.</div><div class="docform"><input class="pin" id="doc-url" placeholder="Google Doc / URL"><textarea class="pin" id="doc-text" rows="3" placeholder="…or paste the text here"></textarea><div class="acts"><button class="btn" onclick="absorbDocument()">Absorb &amp; understand</button></div></div></div>';
   h+=recommendationsCard();
+  h+=demoSandboxCard();
   h+=intakeActivityCard();
   $('#root').innerHTML=h;
 }
@@ -431,6 +459,17 @@ function absorbDocument(){
   fetch('/api/understand-document',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url:url,text:text})})
     .then(r=>r.json()).then(d=>{if(d.ok){toast('Absorbing — gee-trainer reads and understands it, then recommends.');const u=document.getElementById('doc-url');if(u)u.value='';const t=document.getElementById('doc-text');if(t)t.value='';load();}else{toast('Could not read it: '+(d.error||'error'));}}).catch(()=>toast('Could not reach backend.'));
 }
+function launchDemoSandbox(id){
+  if(guard())return;
+  if(!id){toast('Recommendation id missing.');return;}
+  fetch('/api/launch-demo-sandbox',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({recommendation_id:id})})
+    .then(r=>r.json()).then(d=>{if(d.ok){const s=d.sandbox||{};toast('Demo sandbox created — '+((s.created||[]).length)+' real Gees in a throwaway scope.');load();}else{toast('Could not launch sandbox: '+(d.error||'error'));}}).catch(()=>toast('Could not reach backend.'));
+}
+function demoSandboxAction(id,action){
+  if(guard())return;
+  fetch('/api/demo-sandbox-action',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:id,action:action})})
+    .then(r=>r.json()).then(d=>{if(d.ok){toast('Sandbox updated: '+action);load();}else{toast('Could not update sandbox: '+(d.error||'error'));}}).catch(()=>toast('Could not reach backend.'));
+}
 function downloadCard(c){
   const d=(c.download)||{};const links=(d.links||[]);
   if(!links.length && !d.summary)return '';
@@ -442,11 +481,26 @@ function downloadCard(c){
   if(foot.length)h+='<div class="foot" style="padding-left:0">'+foot.join(' · ')+'</div>';
   return h+'</div>';
 }
+function guidesCard(c){
+  const g=(c&&c.guides)||{};
+  const links=(g.links||[]);
+  let h='<div class="card"><h2>'+esc(g.title||'Guides & manuals')+'<span class="src">reference</span></h2>';
+  if(g.summary)h+='<div class="sum">'+esc(g.summary)+'</div>';
+  links.forEach(l=>{
+    let badge;
+    if(l.action==='open-panel'&&l.panel_id){badge='<button class="badge act" onclick="'+(l.panel_id==='gee-onboarding-tour'?'openTour()':'openPanel(\''+esc(l.panel_id)+'\')')+'">open ↗</button>';}
+    else{badge='<a class="badge" href="'+esc(l.url||'#')+'" target="_blank" rel="noopener">open ↗</a>';}
+    h+='<div class="entry"><div class="et">'+esc(l.label||'Guide')+badge+'</div>'+(l.note?'<div class="en">'+esc(l.note)+'</div>':'')+'</div>';
+  });
+  if(!links.length)return '';
+  return h+'</div>';
+}
 function renderCockpit(){
   const c=(STATE.cockpit)||{};const v=(STATE.version)||{};
   let h='';
   h+=downloadCard(c);
   h+=setupCard(c);
+  h+=guidesCard(c);
   h+=newFeaturesCard();
   if(isAuthor()){
   h+=questionnaireSection();
@@ -494,78 +548,6 @@ async function openPanel(id){
 function openTour(){
   if(isAuthor()){openPanel('gee-onboarding-tour');return;}
   try{window.open('./tour.html','_blank');}catch(e){location.href='./tour.html';}
-}
-/* ---- author content editor ---- */
-let EDITING=false, DRAFT=null;
-function canEdit(){return isAuthor() && !PREVIEW;}
-function syncEditToggle(){const b=$('#edit-toggle');if(b)b.classList.toggle('on',EDITING);}
-function toggleEdit(){if(!canEdit())return;EDITING?stopEdit():startEdit();}
-function clone(x){return x==null?x:JSON.parse(JSON.stringify(x));}
-function buildDraft(){
-  const p=(STATE&&STATE.pillars)||{};const ob=p.onboard||{},tr=p.tour||{},cl=p.changelog||{};
-  return {
-    onboard:{summary:ob.summary||'',entries:clone(ob.entries)||[]},
-    tour:{summary:tr.summary||'',examples:clone(tr.examples)||[]},
-    changelog:{summary:cl.summary||'',entries:clone(cl.entries)||[]}
-  };
-}
-function startEdit(){DRAFT=buildDraft();EDITING=true;setView('learner');syncEditToggle();render();}
-function stopEdit(){EDITING=false;DRAFT=null;syncEditToggle();render();}
-function refreshState(){fetch('/api/state',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(s=>{if(s)STATE=s;}).catch(()=>{});}
-function edCard(title,src,inner){return '<div class="card"><h2>'+esc(title)+'<span class="src">'+esc(src)+'</span></h2>'+inner+'</div>';}
-function edAddBtn(oc,label){return '<button class="ed-add" onclick="'+oc+'">'+esc(label)+'</button>';}
-function dset(path,val){const a=path.split('.');let o=DRAFT;for(let i=0;i<a.length-1;i++)o=o[a[i]];o[a[a.length-1]]=val;}
-function edText(path,label,val,rows){return '<div class="ed-field"><label>'+esc(label)+'</label><textarea class="ed-in" rows="'+(rows||2)+'" oninput="dset(\''+path+'\',this.value)">'+esc(val||'')+'</textarea></div>';}
-function edEntry(coll,i,e){
-  const tag=coll==='changelog'?'Note':'Item';const has=e.action==='open-panel'?' · has open button':'';
-  return '<div class="ed-item"><div class="ed-item-h"><span class="lbl">'+esc(tag)+' '+(i+1)+esc(has)+'</span><button class="ed-x" onclick="draftRemove(\''+coll+'\','+i+')">Remove</button></div>'
-    +'<div class="ed-field"><label>Title</label><input class="ed-in" value="'+esc(e.title||'')+'" oninput="draftSet(\''+coll+'\','+i+',\'title\',this.value)"></div>'
-    +'<div class="ed-field"><label>Text</label><textarea class="ed-in" rows="3" oninput="draftSet(\''+coll+'\','+i+',\'note\',this.value)">'+esc(e.note||'')+'</textarea></div></div>';
-}
-function draftSet(coll,i,k,v){DRAFT[coll].entries[i][k]=v;}
-function draftRemove(coll,i){DRAFT[coll].entries.splice(i,1);render();}
-function draftAdd(coll){DRAFT[coll].entries.push({title:'',note:''});render();}
-function edExample(i,x){
-  const jobs=(x.jobs||[]).map((j,ji)=>'<div class="ed-jrow"><input class="ed-in" placeholder="Label" value="'+esc(j.k||'')+'" oninput="exJob('+i+','+ji+',\'k\',this.value)"><textarea class="ed-in" rows="2" placeholder="What it does" oninput="exJob('+i+','+ji+',\'t\',this.value)">'+esc(j.t||'')+'</textarea><button class="ed-x" onclick="exJobDel('+i+','+ji+')">×</button></div>').join('');
-  return '<div class="ed-item"><div class="ed-item-h"><span class="lbl">'+esc(x.label||'Example')+'</span><button class="ed-x" onclick="exDel('+i+')">Remove</button></div>'
-    +'<div class="ed-field"><label>Business name (tab)</label><input class="ed-in" value="'+esc(x.label||'')+'" oninput="exSet('+i+',\'label\',this.value)"></div>'
-    +'<div class="ed-field"><label>Descriptor (line under the tabs)</label><input class="ed-in" value="'+esc(x.tier||'')+'" oninput="exSet('+i+',\'tier\',this.value)"></div>'
-    +'<div class="ed-field"><label>Worker name</label><input class="ed-in" value="'+esc(x.worker||'')+'" oninput="exSet('+i+',\'worker\',this.value)"></div>'
-    +'<div class="ed-field"><label>Worker role</label><input class="ed-in" value="'+esc(x.role||'')+'" oninput="exSet('+i+',\'role\',this.value)"></div>'
-    +'<div class="ed-field"><label>Jobs</label>'+jobs+edAddBtn('exJobAdd('+i+')','+ Add job')+'</div>'
-    +'<div class="ed-field"><label>Sample standing job</label><textarea class="ed-in" rows="2" oninput="exSet('+i+',\'objective\',this.value)">'+esc(x.objective||'')+'</textarea></div></div>';
-}
-function exSet(i,k,v){DRAFT.tour.examples[i][k]=v;}
-function exDel(i){DRAFT.tour.examples.splice(i,1);render();}
-function draftAddExample(){DRAFT.tour.examples.push({label:'New business',tier:'',worker:'Worker',role:'',jobs:[{k:'',t:''}],objective:''});render();}
-function exJob(i,ji,k,v){DRAFT.tour.examples[i].jobs[ji][k]=v;}
-function exJobDel(i,ji){DRAFT.tour.examples[i].jobs.splice(ji,1);render();}
-function exJobAdd(i){(DRAFT.tour.examples[i].jobs=DRAFT.tour.examples[i].jobs||[]).push({k:'',t:''});render();}
-function renderLearnerEdit(){
-  const d=DRAFT;let h='';
-  h+='<div class="ed-hint">Editing the published copy. <b>Save</b> writes to your guide.json; <b>Republish</b> pushes it to the live URL. Only you see this — onboardees never get edit controls.</div>';
-  h+=edCard('Onboard','start here',edText('onboard.summary','Summary',d.onboard.summary,2)+d.onboard.entries.map((e,i)=>edEntry('onboard',i,e)).join('')+edAddBtn("draftAdd('onboard')",'+ Add onboard item'));
-  h+=edCard('Tour','curriculum',edText('tour.summary','Tour summary',d.tour.summary,3)+'<div class="ed-hint" style="margin-top:8px">The tour’s step-by-step lessons are authored by gee-trainer and aren’t edited here yet — say the word to open those up too.</div>');
-  h+=edCard('Guided-tour examples','the walkthrough','<div class="sum">The businesses a new user picks from in the guided tour — each becomes a tab. Add, swap, or remove freely.</div>'+d.tour.examples.map((x,i)=>edExample(i,x)).join('')+edAddBtn('draftAddExample()','+ Add example'));
-  h+=edCard('What’s New','changelog',edText('changelog.summary','Summary',d.changelog.summary,2)+'<div class="ed-hint" style="margin-top:2px">Version-bump lines are captured automatically by version-watch; these are your own notes on top.</div>'+d.changelog.entries.map((e,i)=>edEntry('changelog',i,e)).join('')+edAddBtn("draftAdd('changelog')",'+ Add note'));
-  $('#root').innerHTML=h;
-}
-function syncEditBar(){
-  const show=EDITING&&VIEW==='learner'&&canEdit();let bar=$('#editbar');const main=document.querySelector('main');
-  if(!show){if(bar)bar.remove();if(main)main.classList.remove('editing');return;}
-  if(!bar){bar=document.createElement('div');bar.id='editbar';bar.className='editbar';bar.innerHTML='<span class="msg">Editing published copy — visible only to you</span><button class="btn ghost sm" onclick="stopEdit()">Done</button><button class="btn sm" id="btn-save" onclick="saveContent(this)">Save</button><button class="btn sm" id="btn-pub" style="background:var(--warning);border-color:var(--warning);color:var(--bg-base)" onclick="republish(this)">Republish</button>';document.body.appendChild(bar);}
-  if(main)main.classList.add('editing');
-}
-function saveContent(btn){
-  if(!DRAFT)return;if(btn){btn.disabled=true;btn.textContent='Saving…';}
-  fetch('/api/save-content',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(DRAFT)})
-    .then(r=>r.json()).then(d=>{if(btn){btn.disabled=false;btn.textContent='Save';}if(d.ok){toast('Saved to guide.json.');refreshState();}else{toast('Save failed: '+(d.error||'error'));}})
-    .catch(()=>{if(btn){btn.disabled=false;btn.textContent='Save';}toast('Could not reach backend.');});
-}
-function republish(btn){
-  if(btn){btn.disabled=true;btn.textContent='Publishing…';}
-  fetch('/api/publish',{method:'POST'}).then(r=>r.json()).then(d=>{if(btn){btn.disabled=false;btn.textContent='Republish';}if(d.ok){const g=d.git_sync||{};toast(g.ok?(g.pushed?'Republished + pushed to the live URL.':'Republished — nothing new to push.'):'Published locally; push skipped ('+(g.reason||'no repo')+').');}else{toast('Publish failed: '+(d.error||'error'));}})
-    .catch(()=>{if(btn){btn.disabled=false;btn.textContent='Republish';}toast('Could not reach backend.');});
 }
 load();
 </script>

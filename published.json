@@ -1,6 +1,6 @@
 {
   "schema": 2,
-  "updated_at": "2026-07-07T18:38:50.225304Z",
+  "updated_at": "2026-07-09T22:07:47.496985+00:00",
   "version": {
     "anchor": "0.71.2"
   },
@@ -355,13 +355,35 @@
           "where": "the Gee's settings"
         }
       ]
+    },
+    "guides": {
+      "title": "Guides & manuals",
+      "summary": "The reference shelf. The full manual lives outside the cockpit — everything in here either links out or does something real in the Terminal.",
+      "links": [
+        {
+          "label": "Gee Guide manual",
+          "url": "https://harriet4747.github.io/gee-guide-onboarding/",
+          "note": "The full guide — what Gee is, the tour curriculum, and what's new."
+        },
+        {
+          "label": "Interactive tour",
+          "action": "open-panel",
+          "panel_id": "gee-onboarding-tour",
+          "note": "Seven stops — opens as a real panel right here in the Terminal."
+        },
+        {
+          "label": "Official Gee operating manual",
+          "url": "https://gee.edenic.ai",
+          "note": "The platform's own reference — providers, models, channels, autonomy."
+        }
+      ]
     }
   },
   "questionnaires": {
     "summary": "The intake instruments Gee Guide runs onboarding against. Absorb any questionnaire by pasting its doc; Gee structures it here and maps each answer to what it should drive in an onboarding recommendation.",
-    "interview_intro": "Answer what you can and submit — Gee turns it into an onboarding recommendation. Prefer not to fill a form? Hand over a document about the business instead (below); Gee reads and understands that when the interview isn't filled. Either path is enough.",
+    "interview_intro": "Load what you know about the business — an overview, call notes, a first-meeting doc, a filled-in intake — and Gee recommends the workers to set up and how their work runs as a Gee-Force.",
     "instruments": [],
-    "recommendations_empty": "No recommendation yet. Fill the interview in the Interview tab, or hand over a document there, and Gee maps it — preferring the filled interview and falling back to the document when the interview is empty — into a recommendation here: first workflow, first Gee(s), connectors, and the autonomy dial. It reads only real answers; it never invents them."
+    "recommendations_empty": "No recommendation yet. Load an intake document above (or fill the form) and Gee maps it — reading only what's really there, never inventing — into an expert recommendation: the first workflow to install, the pivot wedge to keep in pocket, the Gee-Force to stand up, the human gates, and the real demo sandbox to launch on a representative task."
   },
-  "published_at": "2026-07-07T21:33:11.530366Z"
+  "published_at": "2026-07-09T22:19:48.980745Z"
 }
